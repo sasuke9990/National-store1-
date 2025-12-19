@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>National Store Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 
+        ========================================
+        ADMIN UI DESIGN SYSTEM - DARK MODE
+        ========================================
+        */
+        :root {
+            --primary: #00e676;      /* Hacker Green */
+            --primary-dark: #00a15d; /* Darker Green */
+            --accent: #fb641b;       /* Orange Accent (kept for danger/warning contrast) */
+            --bg-body: #121212;      /* Very Dark Background */
+            --surface: #1e1e1e;      /* Slightly lighter surface for cards */
+            --text-main: #e0e0e0;    /* Light text for readability */
+            --text-light: #9e9e9e;   /* Lighter grey for sub-text */
+            --border: #333333;       /* Darker border for separation */
+            --success: #00e676;      /* Green for success */
+            --danger: #ef4444;       /* Red for danger */
+            --warning: #f59e0b;      /* Orange for warning */
+            --header-h: 60px;
+            --shadow: 0 4px 6px -1px rgba(0, 230, 118, 0.1), 0 2px 4px -1px rgba(0, 230, 118, 0.06); /* Greenish shadow */
+        }
+
+        /* General Reset and Body */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-body); color: var(--text-main); padding-top: var(--header-h); font-size: 14px; transition: background 0.3s, color 0.3s; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--surface); }
+        ::-webkit-scrollbar-thumb { background: var(--primary-dark); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* HEADER */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h);
+            background: var(--surface); /* Darker surface */
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 24px; z-index: 1000; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+        }
+        .brand { font-weight: 800; font-size: 19px; color: var(--primary); display: flex; align-items: center; gap: 8px; font-style: italic; text-shadow: 0 0 5px rgba(0, 230, 118, 0.5); }
+        .brand span { color: var(--text-main); font-size: 12px; } /* White accent for 'Store' */
+        .header-actions i { font-size: 18px; color: var(--text-light); margin-left: 20px; cursor: pointer; transition: 0.2s; }
+        .header-actions i:hover { color: var(--primary); transform: scale(1.1); }
+
+        /* LAYOUT & UTILS */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; } /* Wider container */
+        .page-title { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; text-shadow: 0 0 3px rgba(0, 230, 118, 0.3); }
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .center { align-items: center; justify-content: center; }
+        .between { justify-content: space-between; }
+        .gap-10 { gap: 10px; }
+        .gap-15 { gap: 15px; } 
+        .gap-20 { gap: 20px; }
+        
+        /* BUTTONS & INPUTS */
+        .btn { padding: 10px 18px; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: var(--bg-body); } /* Green button, dark text */
+        .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 0 15px rgba(0, 230, 118, 0.5); }
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-accent:hover { opacity: 0.9; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { opacity: 0.9; }
+        .btn-success { background: var(--success); color: var(--bg-body); }
+        .btn-success:hover { background: var(--primary-dark); }
+        .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-light); }
+        .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+
+        .input-group { margin-bottom: 15px; }
+        .input-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px; color: var(--text-light); }
+        .input-field { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: var(--surface); color: var(--text-main); transition: 0.2s; }
+        .input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.2); background: var(--bg-body); } 
+        textarea.input-field { resize: vertical; }
+
+        /* CARDS & GRID */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; } /* Increased gap */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; } /* Increased gap */
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; } /* New grid for stats */
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0, 230, 118, 0.2); }
+        
+        /* DASHBOARD STATS */
+        .stat-card { text-align: center; cursor: pointer; border: 1px solid var(--border); min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; } 
+        .stat-card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 0 20px rgba(0, 230, 118, 0.4); }
+        .stat-icon { font-size: 32px; color: var(--primary); margin-bottom: 10px; text-shadow: 0 0 8px rgba(0, 230, 118, 0.7); } 
+        .stat-val { font-size: 28px; font-weight: 800; color: var(--text-main); margin-top: 5px; animation: pulse 1.5s infinite alternate; } 
+        .stat-label { font-size: 14px; color: var(--text-light); font-weight: 500; margin-top: 5px; }
+        .badge-count { position: absolute; top: 10px; right: 10px; background: var(--danger); color: white; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; animation: bounce 1s infinite; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.03); opacity: 0.95; }
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-2px); }
+        }
+
+        /* ORDER LIST */
+        .order-card { border-left: 4px solid transparent; }
+        .st-Processing { border-left-color: var(--warning); background: #28200d; } /* Darker warning */
+        .st-Accepted { border-left-color: var(--success); background: #1a2c1f; } /* Darker success */
+        .st-Rejected { border-left-color: var(--danger); background: #2c1a1a; } /* Darker danger */
+        .order-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .order-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--text-main); }
+        .order-price { font-weight: 700; color: var(--primary); font-size: 16px; }
+
+        /* PRODUCT LIST */
+        .prod-item { display: flex; align-items: center; gap: 15px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .prod-img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); }
+        .prod-info { flex: 1; }
+        .prod-name { font-weight: 600; font-size: 14px; color: var(--text-main); }
+        .prod-price { font-size: 13px; color: var(--primary); font-weight: 600; }
+
+        /* CHAT UI */
+        .chat-list-item { padding: 15px; border-bottom: 1px solid var(--border); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+        .chat-list-item:hover { background: #2a2a2a; }
+        .chat-room { display: flex; flex-direction: column; height: calc(100vh - 140px); background: #2a2a2a; border-radius: 8px; overflow: hidden; }
+        .msgs-area { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg-bubble { padding: 8px 12px; border-radius: 8px; max-width: 75%; font-size: 14px; color: var(--text-main); }
+        .msg-in { background: var(--surface); align-self: flex-start; border-top-left-radius: 0; }
+        .msg-out { background: var(--primary-dark); color: var(--bg-body); align-self: flex-end; border-top-right-radius: 0; }
+        .chat-input { padding: 10px; background: var(--surface); display: flex; gap: 10px; border-top: 1px solid var(--border); }
+
+        /* LOGIN SCREEN */
+        .login-wrap { 
+            position: fixed; inset: 0; 
+            background: linear-gradient(135deg, var(--bg-body) 0%, #0a0a0a 100%); 
+            display: flex; align-items: center; justify-content: center; z-index: 2000;
+            overflow: hidden;
+        }
+        .login-box { 
+            background: var(--surface); width: 380px; padding: 40px; border-radius: 16px; text-align: center; 
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.3); border: 1px solid var(--primary-dark);
+            position: relative; z-index: 10;
+        }
+        .login-logo { width: 60px; height: 60px; margin-bottom: 15px; border-radius: 12px; filter: grayscale(50%); transition: filter 0.3s; }
+        .login-logo:hover { filter: grayscale(0%); }
+        .login-box h2 { margin-bottom: 5px; color: var(--primary); text-shadow: 0 0 5px rgba(0, 230, 118, 0.5); }
+        .login-box p { color: var(--text-light); margin-bottom: 25px; font-size: 12px; }
+        .login-error { color: var(--danger); margin-top: -10px; margin-bottom: 10px; font-size: 12px; opacity: 0; transition: opacity 0.3s; }
+        .login-error.show { opacity: 1; }
+
+        /* Matrix Background for Login */
+        .matrix-bg {
+            position: absolute; inset: 0; background: #000; overflow: hidden;
+            pointer-events: none; opacity: 0.3;
+        }
+        .matrix-column {
+            position: absolute; top: 0; white-space: pre;
+            font-family: 'monospace'; font-size: 15px; color: var(--primary);
+            text-shadow: 0 0 8px var(--primary);
+            animation: matrix-scroll linear infinite;
+        }
+        @keyframes matrix-scroll {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Welcome Popup */
+        #welcome-popup {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9); z-index: 5001;
+            display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        #welcome-popup.show { opacity: 1; visibility: visible; }
+        #welcome-popup-box {
+            background: linear-gradient(135deg, var(--primary-dark), #004d2c);
+            color: white; padding: 50px; border-radius: 15px; text-align: center;
+            box-shadow: 0 0 40px rgba(0, 230, 118, 0.8); border: 2px solid var(--primary);
+            font-size: 28px; font-weight: 700; text-shadow: 0 0 10px white;
+            animation: zoomIn 0.5s ease-out;
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+
+        /* FAB */
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; background: var(--primary); color: var(--bg-body); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 10px 15px -3px rgba(0, 230, 118, 0.3); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .fab:hover { transform: scale(1.1); box-shadow: 0 12px 20px rgba(0, 230, 118, 0.5); }
+
+        /* TOAST */
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 12px 24px; border-radius: 30px; display: none; z-index: 3000; box-shadow: var(--shadow); }
+        
+        /* Receipt Dialog - for Accept Order */
+        #receipt-dialog {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); z-index: 5000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #receipt-box {
+            background: var(--surface); width: 90%; max-width: 450px; padding: 20px; border-radius: 10px;
+            font-family: 'monospace'; white-space: pre-wrap; word-break: break-word;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.5); border: 1px solid var(--primary-dark);
+            color: var(--text-main);
+        }
+        .text-center { text-align: center; }
+        .receipt-content { font-size: 11px; line-height: 1.5; color: var(--text-light); }
+        .receipt-logo { color: var(--primary); font-weight: 800; font-size: 14px; }
+        
+        /* System Operations View */
+        .system-ops-wrap {
+            position: fixed; inset: 0; background: #000; z-index: 6000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0.5s;
+        }
+        .system-ops-wrap.show { opacity: 1; visibility: visible; }
+        .system-ops-output {
+            color: var(--primary); font-family: monospace; font-size: 18px;
+            white-space: pre-wrap; overflow: hidden; border-right: .15em solid var(--primary);
+            animation: typing 2s steps(40, end) forwards, blink-caret .75s step-end infinite;
+            text-shadow: 0 0 10px var(--primary);
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--primary); }
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .container { padding: 15px; }
+            .header-actions i { margin-left: 15px; }
+            .page-title { font-size: 20px; }
+            .login-box { width: 90%; padding: 30px; }
+            .fab { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 20px; }
+        }
+        @media (max-width: 480px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 10px; }
+            header { padding: 0 15px; }
+            .brand { font-size: 17px; }
+            .header-actions i { margin-left: 10px; }
+            .btn { padding: 8px 15px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-view" class="login-wrap">
+        <div class="matrix-bg" id="matrix-bg"></div>
+        <div class="login-box">
+            <img src="https://i.ibb.co/k22dzznf/x.jpg" alt="Logo" class="login-logo">
+            <h2>NATIONAL STORE ADMIN</h2>
+            <p>Secure Access Protocol Initiated</p>
+            <div class="input-group">
+                <input type="password" id="admin-pass" class="input-field" placeholder="Enter Authorization Key">
+            </div>
+            <p id="login-error" class="login-error">ACCESS DENIED. RETRY.</p>
+            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="Auth.login()"><i class="fas fa-fingerprint"></i> AUTHENTICATE</button>
+        </div>
+    </div>
+
+    <!-- WELCOME POPUP -->
+    <div id="welcome-popup" class="hidden">
+        <div id="welcome-popup-box">
+            WELCOME, MASTER SASUKE
+        </div>
+    </div>
+
+    <!-- SYSTEM OPERATIONS SCREEN -->
+    <div id="system-ops-screen" class="system-ops-wrap hidden">
+        <pre id="system-ops-output" class="system-ops-output"></pre>
+    </div>
+
+    <!-- HEADER -->
+    <header id="app-header" class="hidden">
+        <div class="brand">
+            <i class="fas fa-shield-alt"></i> National<span>Store</span>
+        </div>
+        <div class="header-actions">
+            <i class="fas fa-sync-alt" onclick="App.refresh()" title="Sync Data"></i>
+            <i class="fas fa-power-off" onclick="Auth.logout()" title="Logout" style="color: var(--danger);"></i>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div id="main-content" class="hidden container"></div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast">Settings Saved</div>
+    
+    <!-- RECEIPT DIALOG -->
+    <div id="receipt-dialog" class="hidden">
+        <div id="receipt-box">
+            <div class="text-center" style="margin-bottom: 15px;">
+                <h3 style="color: var(--primary);">Order Accepted!</h3>
+            </div>
+            <pre id="receipt-content" class="receipt-content"></pre>
+            <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="Actions.closeReceiptDialog()"><i class="fas fa-check"></i> OK</button>
+        </div>
+    </div>
+    
+    <!-- FIREBASE SDKS -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
+    <script>
+        // Use a simple Base64 encryption for the password 'gggg'
+        const ENCRYPTED_PASS = btoa('gggg'); 
+
+        const CONFIG = {
+            pass: ENCRYPTED_PASS
+        };
+        
+        // --- FIREBASE INITIALIZATION ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyBYZY37BMidIcCfFafxscuMsEDar0I4w0M",
+          authDomain: "pyhost1.firebaseapp.com",
+          databaseURL: "https://pyhost1-default-rtdb.firebaseio.com",
+          projectId: "pyhost1",
+          storageBucket: "pyhost1.firebasestorage.app",
+          messagingSenderId: "166734993117",
+          appId: "1:166734993117:web:80013e3799a5ecc1d5ed34"
+        };
+        
+        // Initialize Firebase (simulated reference to the real Firebase object)
+        // const FIREBASE_APP = firebase.initializeApp(firebaseConfig);
+        // const FIREBASE_DB = FIREBASE_APP.database();
+
+        /* 
+        ========================================
+        AUDIO CUES
+        ======================================== 
+        */
+        const AudioCues = {
+            loginSuccess: new Audio('https://www.soundjay.com/buttons/beep-07a.mp3'), // Replace with your desired sound
+            loginFail: new Audio('https://www.soundjay.com/buttons/button-10.mp3'), // Replace with your desired sound
+            buttonClick: new Audio('https://www.soundjay.com/buttons/button-1.mp3'), // Replace
+            systemInit: new Audio('https://www.soundjay.com/mechanical/computer-startup-01.mp3') // Replace
+        };
+        // Set volume low for background sounds
+        AudioCues.systemInit.volume = 0.4;
+
+
+        /* 
+        ========================================
+        MATRIX ANIMATION FOR LOGIN
+        ======================================== 
+        */
+        const MatrixEffect = {
+            init: () => {
+                const matrixBg = document.getElementById('matrix-bg');
+                if (!matrixBg) return;
+
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}|:"<>?-=[]\';./,`~';
+                const charArray = characters.split('');
+                const numColumns = Math.floor(window.innerWidth / 15); // Adjust column width
+                const columnHeight = window.innerHeight;
+
+                for (let i = 0; i < numColumns; i++) {
+                    const column = document.createElement('div');
+                    column.classList.add('matrix-column');
+                    column.style.left = `${i * 15}px`;
+                    column.style.animationDuration = `${Math.random() * 5 + 3}s`; // Random speed
+                    column.style.animationDelay = `${Math.random() * -5}s`; // Random delay
+
+                    let columnText = '';
+                    for (let j = 0; j < columnHeight / 15; j++) { // Adjust line height
+                        columnText += charArray[Math.floor(Math.random() * charArray.length)] + '\n';
+                    }
+                    column.innerText = columnText;
+                    matrixBg.appendChild(column);
+                }
+            }
+        };
+
+        /* 
+        ========================================
+        1. DATA LAYER (LocalStorage & Simulated Firebase)
+        ======================================== 
+        */
+        const DB = {
+            data: {},
+            load: () => {
+                // Simulate loading from Firebase (using localStorage for demo persistence)
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                DB.data = {
+                    orders: JSON.parse(localStorage.getItem('ns_orders')) || [
+                         {
+                            id:'1234567890', productName:'Quantum Processor', total:5390, date:new Date().toISOString(), status:'Processing', 
+                            user:{phone:'9876543210', email:'user@mail.com', name:'Test User', address:'HNo 123, Cyber Lane, Neo-City, Alpha-State, PIN:123456', moreDetails:'Near Data Center Entrance'}, 
+                            payment:'COD'
+                         },
+                         {
+                            id:'1234567891', productName:'Neural Interface Headset', total:12500, date:new Date(Date.now() - 86400000).toISOString(), status:'Accepted', 
+                            user:{phone:'9876543211', email:'test2@mail.com', name:'Agent Smith', address:'Unit 404, Virtual Hub, Matrix City, Null-State, PIN:654321', moreDetails:'Leave at secure drop-off point'}, 
+                            payment:'Online'
+                         },
+                         {
+                            id:'1234567892', productName:'Encrypted Data Drive', total:899, date:new Date().toISOString(), status:'Processing', 
+                            user:{phone:'9876543212', email:'shadow@mail.com', name:'Shadow Figure', address:'Hidden Alley, Old Town, Ghost City, Unknown, PIN:000000', moreDetails:'Discreet delivery'}, 
+                            payment:'COD'
+                         }
+                    ],
+                    products: JSON.parse(localStorage.getItem('ns_products')) || [
+                        {id: 'P001', name: 'Quantum Processor', price: 5390, mrp: 7999, discount: 20, delivery: 50, desc: 'Next-gen processing power.', longDesc: 'Unleash the power of quantum computing in your hands.', images: ['https://i.ibb.co/L8m7fFf/product1.jpg'], rating: 5, category: 'Electronics'},
+                        {id: 'P002', name: 'Neural Interface Headset', price: 12500, mrp: 15000, discount: 15, delivery: 0, desc: 'Direct brain-computer interface.', longDesc: 'Experience seamless interaction with digital worlds.', images: ['https://i.ibb.co/dLg59fJ/product2.jpg'], rating: 4, category: 'Electronics'}
+                    ],
+                    messages: JSON.parse(localStorage.getItem('ns_messages')) || [
+                        {id: 1, userId: 'Agent007', text: 'My order #1234567891 is delayed.', time: new Date(Date.now() - 3600000).toISOString(), reply: '', replyTime: ''},
+                        {id: 2, userId: 'Agent007', text: 'Still waiting for update.', time: new Date(Date.now() - 1800000).toISOString(), reply: '', replyTime: ''}
+                    ],
+                    banners: JSON.parse(localStorage.getItem('ns_banners')) || [],
+                    config: JSON.parse(localStorage.getItem('ns_config')) || { maintenance: false, maintMsg: "System protocols under update. Standby for reactivation.", dialog: null }
+                };
+
+                // Add simulated sales and users for dashboard
+                DB.data.totalSales = DB.data.orders.reduce((sum, order) => sum + order.total, 0);
+                DB.data.totalUsers = new Set(DB.data.orders.map(o => o.user?.phone)).size;
+                DB.data.ordersToday = DB.data.orders.filter(o => o.date.startsWith(today)).length;
+            },
+            save: (key) => {
+                // Simulate saving to Firebase and LocalStorage
+                localStorage.setItem('ns_' + key, JSON.stringify(DB.data[key]));
+                // FIREBASE_DB.ref(key).set(DB.data[key]); // Actual Firebase save hook
+            }
+        };
+
+        /* 
+        ========================================
+        2. AUTHENTICATION
+        ======================================== 
+        */
+        const Auth = {
+            check: () => {
+                if(sessionStorage.getItem('ns_admin_auth')) {
+                    document.getElementById('login-view').classList.add('hidden');
+                    document.getElementById('app-header').classList.remove('hidden');
+                    document.getElementById('main-content').classList.remove('hidden');
+                    Router.init();
+                } else {
+                    MatrixEffect.init(); // Initialize matrix effect only on login screen
+                }
+            },
+            login: () => {
+                AudioCues.buttonClick.play();
+                const input = document.getElementById('admin-pass').value;
+                const loginError = document.getElementById('login-error');
+
+                if(input === atob(CONFIG.pass)) { 
+                    AudioCues.loginSuccess.play();
+                    sessionStorage.setItem('ns_admin_auth', 'true');
+                    
+                    // Show welcome popup
+                    const welcomePopup = document.getElementById('welcome-popup');
+                    welcomePopup.classList.remove('hidden');
+                    welcomePopup.classList.add('show');
+
+                    setTimeout(() => {
+                        welcomePopup.classList.remove('show');
+                        welcomePopup.classList.add('hidden');
+                        location.reload(); // Reload to clear login view and show dashboard
+                    }, 2000); // Show popup for 2 seconds
+                    
+                } else {
+                    AudioCues.loginFail.play();
+                    loginError.classList.add('show');
+                    setTimeout(() => loginError.classList.remove('show'), 3000);
+                }
+            },
+            logout: () => {
+                AudioCues.buttonClick.play();
+                if(confirm('Initiate Logout Protocol?')) {
+                    sessionStorage.removeItem('ns_admin_auth');
+                    location.reload();
+                }
+            }
+        };
+
+        /* 
+        ========================================
+        3. ROUTER & APP LOGIC
+        ======================================== 
+        */
+        const App = {
+            refresh: () => {
+                AudioCues.buttonClick.play();
+                DB.load();
+                Router.render(window.location.hash.slice(1) || 'dashboard');
+                App.toast('Dashboard Synced');
+            },
+            toast: (msg) => {
+                const t = document.getElementById('toast');
+                t.innerText = msg;
+                t.style.display = 'block';
+                setTimeout(() => t.style.display = 'none', 2500);
+            },
+            copyToClipboard: (text) => {
+                const temp = document.createElement('textarea');
+                temp.value = text;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand('copy');
+                document.body.removeChild(temp);
+                App.toast('Copied to Clipboard!');
+            }
+        };
+
+        const Router = {
+            init: () => {
+                DB.load();
+                window.addEventListener('hashchange', () => Router.render(window.location.hash.slice(1)));
+                Router.render(window.location.hash.slice(1) || 'dashboard');
+            },
+            render: (route) => {
+                const container = document.getElementById('main-content');
+                const [view, param] = route.split('=');
+                
+                container.innerHTML = ''; // Clear view
+
+                if(view === 'dashboard') Views.dashboard(container);
+                else if(view === 'orders') Views.orders(container, param);
+                else if(view === 'products') Views.products(container);
+                else if(view === 'add-product') Views.productForm(container, param);
+                else if(view === 'messages') Views.messages(container);
+                else if(view === 'chat') Views.chatRoom(container, param);
+                else if(view === 'banners') Views.banners(container);
+                else if(view === 'settings') Views.settings(container);
+                else if(view === 'send-dialog') Views.sendDialog(container);
+                else if(view === 'system-ops') Views.systemOperations(container); // New System Operations view
+                else Views.dashboard(container);
+            }
+        };
+
+        /* 
+        ========================================
+        4. VIEW CONTROLLERS
+        ======================================== 
+        */
+        const Views = {
+            dashboard: (el) => {
+                const processingOrders = DB.data.orders.filter(o => o.status === 'Processing').length;
+                const unreadMessages = new Set(DB.data.messages.filter(m => !m.reply).map(m => m.userId)).size;
+                const websiteStatus = DB.data.config.maintenance ? 'OFFLINE' : 'LIVE';
+
+                el.innerHTML = `
+                    <div class="page-title">SYSTEM CONTROL PANEL</div>
+                    <div class="grid-4" style="margin-bottom: 30px;">
+                        <!-- Animated Stats -->
+                        <div class="card stat-card" onclick="location.hash='#orders'">
+                            <i class="fas fa-money-bill-wave stat-icon" style="color:var(--success);"></i>
+                            <div class="stat-val">₹${DB.data.totalSales.toLocaleString()}</div>
+                            <div class="stat-label">Total Revenue</div>
+                        </div>
+                        <div class="card stat-card" onclick="location.hash='#messages'">
+                            <i class="fas fa-users stat-icon" style="color:var(--primary);"></i>
+                            <div class="stat-val">${DB.data.totalUsers}</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="card stat-card" onclick="location.hash='#orders'">
+                             ${processingOrders ? `<div class="badge-count">${processingOrders}</div>` : ''}
+                            <i class="fas fa-boxes stat-icon" style="color:var(--warning);"></i>
+                            <div class="stat-val">${DB.data.orders.length}</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                        <div class="card stat-card" onclick="location.hash='#orders'">
+                            <i class="fas fa-shopping-basket stat-icon" style="color:var(--primary-dark);"></i>
+                            <div class="stat-val">${DB.data.ordersToday}</div>
+                            <div class="stat-label">Orders Today</div>
+                        </div>
+                    </div>
+
+                    <div class="page-title">Quick Access Modules</div>
+                    <div class="grid-2">
+                        <!-- 1. Orders -->
+                        <div class="card stat-card" onclick="location.hash='#orders'">
+                            ${processingOrders ? `<div class="badge-count">${processingOrders}</div>` : ''}
+                            <i class="fas fa-shopping-bag stat-icon" style="color:var(--primary);"></i>
+                            <div class="stat-label" style="font-weight:700;">Orders (${processingOrders} Pending)</div>
+                        </div>
+                        <!-- 2. Website On/Off -->
+                        <div class="card stat-card" onclick="location.hash='#settings'">
+                            <i class="fas fa-server stat-icon" style="color:${websiteStatus==='LIVE'?'var(--success)':'var(--danger)'}"></i>
+                            <div class="stat-val" style="font-size:18px; margin-top:0;">${websiteStatus}</div>
+                            <div class="stat-label">System Status</div>
+                        </div>
+                        <!-- 3. User Messages -->
+                        <div class="card stat-card" onclick="location.hash='#messages'">
+                            ${unreadMessages ? `<div class="badge-count">${unreadMessages}</div>` : ''}
+                            <i class="fas fa-comment-dots stat-icon" style="color:var(--accent);"></i>
+                            <div class="stat-label" style="font-weight:700;">User Communications</div>
+                        </div>
+                        <!-- 4. Add Product -->
+                        <div class="card stat-card" onclick="location.hash='#add-product'">
+                            <i class="fas fa-box-open stat-icon"></i>
+                            <div class="stat-label" style="font-weight:700;">Deploy New Product</div>
+                        </div>
+                        <!-- 5. Manage Product -->
+                        <div class="card stat-card" onclick="location.hash='#products'">
+                            <i class="fas fa-cubes stat-icon"></i>
+                            <div class="stat-val">${DB.data.products.length}</div>
+                            <div class="stat-label">Manage Inventory</div>
+                        </div>
+                        <!-- 6. Banners -->
+                        <div class="card stat-card" onclick="location.hash='#banners'">
+                            <i class="fas fa-images stat-icon"></i>
+                            <div class="stat-val">${DB.data.banners.length}</div>
+                            <div class="stat-label">Manage Banners</div>
+                        </div>
+                        <!-- 7. Send Dialogue -->
+                        <div class="card stat-card" onclick="location.hash='#send-dialog'">
+                            <i class="fas fa-bullhorn stat-icon" style="color:var(--success);"></i>
+                            <div class="stat-label" style="font-weight:700;">Broadcast Global Alert</div>
+                        </div>
+                        <!-- 8. System Operations (New) -->
+                        <div class="card stat-card" onclick="Actions.initSystemOperations()">
+                            <i class="fas fa-terminal stat-icon" style="color:var(--primary-dark);"></i>
+                            <div class="stat-label" style="font-weight:700;">System Operations</div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            orders: (el, detailId) => {
+                if(detailId) return Views.orderDetail(el, detailId);
+
+                let html = `<div class="page-title">
+                    Order Management <button class="btn btn-ghost" onclick="location.hash='#dashboard'">Back</button>
+                </div>`;
+                
+                if(DB.data.orders.length === 0) {
+                    html += `<div class="text-center" style="color:var(--text-light); margin-top:50px;">No Orders Found in the Database.</div>`;
+                } else {
+                    // Sort by date (newest first)
+                    DB.data.orders.sort((a,b) => new Date(b.date) - new Date(a.date));
+                    
+                    DB.data.orders.forEach(o => {
+                        // Check for user existence defensively
+                        const userPhone = o.user ? o.user.phone : 'N/A';
+                        const userName = o.user ? o.user.name : 'Unknown User';
+                        
+                        html += `
+                        <div class="card order-card st-${o.status}" onclick="location.hash='#orders=${o.id}'">
+                            <div class="order-head">
+                                <span>#${o.id.substring(0, 10)}</span>
+                                <span>${new Date(o.date).toLocaleDateString()} ${new Date(o.date).toLocaleTimeString()}</span>
+                            </div>
+                            <div class="order-title">${o.productName}</div>
+                            <div class="flex between center">
+                                <div class="order-price">₹${o.total}</div>
+                                <div style="font-weight:700; font-size:12px; color:var(--text-light); text-transform:uppercase;">${o.status}</div>
+                            </div>
+                            <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:13px; color:var(--text-light);">
+                                <i class="fas fa-user"></i> ${userName} <br>
+                                <i class="fas fa-phone"></i> ${userPhone}
+                            </div>
+                            ${o.status === 'Processing' ? `<div class="badge-count" style="right:unset; left:10px; top:10px; background:var(--danger);"><i class="fas fa-bell"></i></div>` : ''}
+                        </div>`;
+                    });
+                }
+                el.innerHTML = html;
+            },
+            
+            orderDetail: (el, id) => {
+                const o = DB.data.orders.find(x => x.id === id);
+                if(!o || !o.user) {
+                     App.toast('Order not found or user data missing.');
+                     return Router.render('orders');
+                }
+                
+                const receiptButton = o.status === 'Accepted' ? 
+                    `<button class="btn btn-primary" style="flex:1;" onclick="Actions.showReceipt('${o.id}')"><i class="fas fa-receipt"></i> Show Receipt</button>` : '';
+
+                el.innerHTML = `
+                <div class="page-title">
+                    Order Details #${o.id.substring(0, 10)} 
+                    <button class="btn btn-ghost" onclick="location.hash='#orders'">Back to List</button>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom:15px; color:var(--primary);">Product & Price</h3>
+                    <div class="flex between gap-10" style="padding-bottom:10px; border-bottom:1px solid var(--border);">
+                        <span style="font-weight:600; color:var(--text-main);">${o.productName}</span>
+                        <span style="font-weight:700; color:var(--primary);">₹${o.total}</span>
+                    </div>
+                    <div class="flex between gap-10" style="padding-top:10px;">
+                        <span style="font-size:12px; color:var(--text-light);">Payment Type:</span>
+                        <span style="font-weight:600; color:var(--text-main);">${o.payment || 'COD'}</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 style="margin-bottom:15px; color:var(--primary);">Customer Details</h3>
+                    <div class="flex between gap-10" style="margin-bottom:10px;">
+                        <span style="font-size:12px; color:var(--text-light);"><i class="fas fa-user"></i> Name:</span>
+                        <span style="font-weight:600; color:var(--text-main);">${o.user.name || 'N/A'}</span>
+                    </div>
+                    <div class="flex between gap-10" style="margin-bottom:10px;">
+                        <span style="font-size:12px; color:var(--text-light);"><i class="fas fa-phone"></i> Phone:</span>
+                        <span style="font-weight:600; color:var(--text-main);">${o.user.phone || 'N/A'}</span>
+                        <button class="btn btn-ghost" onclick="App.copyToClipboard('${o.user.phone || ''}')"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <div class="flex between gap-10" style="margin-bottom:10px;">
+                        <span style="font-size:12px; color:var(--text-light);"><i class="fas fa-envelope"></i> Email:</span>
+                        <span style="font-weight:600; color:var(--text-main);">${o.user.email || 'N/A'}</span>
+                        <button class="btn btn-ghost" onclick="App.copyToClipboard('${o.user.email || ''}')"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <div style="font-size:12px; color:var(--text-light); margin-bottom:5px;"><i class="fas fa-map-marker-alt"></i> Full Address:</div>
+                        <div style="font-weight:600; background:var(--bg-body); padding:10px; border-radius:4px; color:var(--text-main);">${o.user.address || 'N/A'}</div>
+                        <button class="btn btn-ghost" style="margin-top:5px;" onclick="App.copyToClipboard('${o.user.address || ''}')"><i class="fas fa-copy"></i> Copy Address</button>
+                    </div>
+                    ${o.user.moreDetails ? `
+                    <div style="margin-bottom:10px;">
+                        <div style="font-size:12px; color:var(--text-light); margin-bottom:5px;"><i class="fas fa-info-circle"></i> More Details:</div>
+                        <div style="font-weight:500; font-size:13px; background:var(--bg-body); padding:10px; border-radius:4px; color:var(--text-main);">${o.user.moreDetails}</div>
+                    </div>` : ''}
+                </div>
+                
+                <div class="card st-${o.status}">
+                    <div class="flex between center">
+                        <h4 style="color:var(--text-main);">Current Status: </h4>
+                        <span style="font-size:16px; font-weight:700; text-transform:uppercase; color:${o.status === 'Accepted' ? 'var(--success)' : (o.status === 'Rejected' ? 'var(--danger)' : 'var(--warning)')}">${o.status} ${o.status === 'Accepted' ? '✅' : ''}</span>
+                    </div>
+                    
+                    ${o.status === 'Processing' ? `
+                    <div class="flex gap-10" style="margin-top:15px;">
+                        <button class="btn btn-danger" style="flex:1;" onclick="Actions.orderStatus('${o.id}', 'Rejected')"><i class="fas fa-times"></i> Reject Order</button>
+                        <button class="btn btn-success" style="flex:1;" onclick="Actions.acceptOrder('${o.id}')"><i class="fas fa-check"></i> Accept Order</button>
+                    </div>` : `<div class="flex gap-10" style="margin-top:15px;">${receiptButton}</div>`}
+                </div>
+                `;
+            },
+
+            products: (el) => {
+                let html = `
+                <div class="page-title">Inventory Management <button class="btn btn-ghost" onclick="location.hash='#dashboard'">Back</button></div>
+                <div class="card">
+                    <input type="text" id="product-search" class="input-field" onkeyup="Actions.filterProducts(this.value)" placeholder="Search by Product Name/ID" style="margin-bottom: 15px;">
+                </div>
+                <div class="card" id="product-list-container" style="padding:0;">`;
+                
+                DB.data.products.forEach(p => {
+                    html += Views.productListItem(p);
+                });
+                
+                html += `</div>
+                <div class="fab" onclick="location.hash='#add-product'"><i class="fas fa-plus"></i></div>`;
+                el.innerHTML = html;
+            },
+            
+            productListItem: (p) => {
+                return `
+                <div class="prod-item" data-name="${(p.name || '').toLowerCase()}" data-id="${(p.id || '').toLowerCase()}">
+                    <img src="${p.images ? p.images[0] : 'https://via.placeholder.com/150/00e676/000000?text=NO_IMG'}" class="prod-img">
+                    <div class="prod-info">
+                        <div class="prod-name">${p.name || 'No Name'}</div>
+                        <div class="prod-price">ID: ${p.id || 'N/A'} | ₹${p.price || 0}</div>
+                    </div>
+                    <div class="flex gap-10">
+                        <i class="fas fa-pen" style="color:var(--primary); cursor:pointer;" onclick="location.hash='#add-product=${p.id}'"></i>
+                        <i class="fas fa-trash" style="color:var(--danger); cursor:pointer;" onclick="Actions.delProduct('${p.id}')"></i>
+                    </div>
+                </div>`;
+            },
+
+            productForm: (el, id) => {
+                const existingProduct = id ? DB.data.products.find(x => x.id === id) : null;
+                const p = existingProduct || {
+                    id: 'P'+Date.now().toString().substring(0, 10), name:'', price:'', mrp:'', discount:0, delivery:0, desc:'', longDesc:'', images:[''], rating: 5, category: ''
+                };
+                
+                document.getElementById('product-list-container')?.classList.add('hidden'); // Hide list if editing from list
+
+                el.innerHTML = `
+                <div class="page-title">${id ? 'Edit' : 'Add'} Product <button class="btn btn-ghost" onclick="location.hash='#products'">Cancel</button></div>
+                <div class="card">
+                    <div class="input-group">
+                        <label class="input-label">Product ID (Cannot Edit)</label>
+                        <input class="input-field" value="${p.id}" readonly style="background:var(--bg-body); color:var(--text-light);">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Product Name</label>
+                        <input id="p-name" class="input-field" value="${p.name || ''}">
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label class="input-label">Selling Price</label>
+                            <input type="number" id="p-price" class="input-field" value="${p.price || 0}">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">MRP (Cutted Price)</label>
+                            <input type="number" id="p-mrp" class="input-field" value="${p.mrp || 0}">
+                        </div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="input-group">
+                            <label class="input-label">Discount %</label>
+                            <input type="number" id="p-disc" class="input-field" value="${p.discount || 0}">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Delivery Fee (0 for Free)</label>
+                            <input type="number" id="p-del" class="input-field" value="${p.delivery || 0}">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Default Rating (1-5)</label>
+                            <input type="number" id="p-rating" class="input-field" value="${p.rating || 5}" min="1" max="5">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Short Description</label>
+                        <input id="p-desc" class="input-field" value="${p.desc || ''}">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Long Description (For Details Page)</label>
+                        <textarea id="p-long-desc" class="input-field" rows="4">${p.longDesc || ''}</textarea>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Category</label>
+                        <select id="p-cat" class="input-field">
+                            <option value="">Select Category</option>
+                            <option value="Fashion" ${p.category === 'Fashion' ? 'selected' : ''}>Fashion</option>
+                            <option value="Electronics" ${p.category === 'Electronics' ? 'selected' : ''}>Electronics</option>
+                            <option value="Mobiles" ${p.category === 'Mobiles' ? 'selected' : ''}>Mobiles</option>
+                            <option value="Home" ${p.category === 'Home' ? 'selected' : ''}>Home</option>
+                            <option value="Beauty" ${p.category === 'Beauty' ? 'selected' : ''}>Beauty</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Image URLs (First is Main, Use multiple for slide)</label>
+                        <div id="img-list">
+                            ${(p.images && p.images.length > 0 ? p.images : ['']).map(url => `<input class="input-field img-in" value="${url}" style="margin-bottom:5px;">`).join('')}
+                        </div>
+                        <button class="btn btn-ghost" style="width:100%; margin-top:5px;" onclick="Actions.addImgField()">+ Add Image URL</button>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:10px;" onclick="Actions.saveProduct('${id||''}')">SAVE TO INVENTORY</button>
+                </div>`;
+            },
+
+            messages: (el) => {
+                const users = [...new Set(DB.data.messages.map(m => m.userId))];
+                let html = `<div class="page-title">Support Inbox <button class="btn btn-ghost" onclick="location.hash='#dashboard'">Back</button></div><div class="card" style="padding:0;">`;
+                
+                users.forEach(u => {
+                    const msgs = DB.data.messages.filter(m => m.userId === u);
+                    const last = msgs.length > 0 ? msgs[msgs.length - 1] : null;
+                    // New logic: unread is the number of user messages *without* a reply
+                    const unreadCount = msgs.filter(m => !m.reply).length;
+                    
+                    html += `
+                    <div class="chat-list-item" onclick="location.hash='#chat=${u}'">
+                        <div>
+                            <div style="font-weight:700; font-size:15px; color:var(--text-main);">${u}</div>
+                            <div style="font-size:12px; color:var(--text-light);">${last ? (last.text.substring(0, 30) + (last.text.length > 30 ? '...' : '')) : 'No messages'}</div>
+                        </div>
+                        ${unreadCount ? `<div style="background:var(--danger); color:white; font-size:11px; padding:2px 8px; border-radius:10px;">${unreadCount}</div>` : '<i class="fas fa-chevron-right" style="color:#ccc;"></i>'}
+                    </div>`;
+                });
+                
+                el.innerHTML = html + `</div>`;
+            },
+
+            chatRoom: (el, userId) => {
+                const msgs = DB.data.messages.filter(m => m.userId === userId);
+                
+                let html = `
+                <div class="page-title" style="font-size:16px;">
+                    <span>Comm with ${userId}</span>
+                    <button class="btn btn-ghost" onclick="location.hash='#messages'">Back</button>
+                </div>
+                <div class="chat-room">
+                    <div class="msgs-area" id="chat-area">`;
+                
+                // Show messages, if a reply exists, show it.
+                msgs.forEach(m => {
+                    html += `<div class="msg-bubble msg-in">${m.text} <span style="font-size:10px; opacity:0.7;">(${new Date(m.time).toLocaleTimeString()})</span></div>`;
+                    if(m.reply) html += `<div class="msg-bubble msg-out">${m.reply} <span style="font-size:10px; opacity:0.7;">(${new Date(m.replyTime).toLocaleTimeString()})</span></div>`;
+                });
+
+                html += `</div>
+                    <div class="chat-input">
+                        <input id="reply-txt" class="input-field" placeholder="Type reply...">
+                        <button class="btn btn-primary" onclick="Actions.reply('${userId}')"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>`;
+                el.innerHTML = html;
+                setTimeout(() => document.getElementById('chat-area').scrollTop = 9999, 100);
+            },
+
+            banners: (el) => {
+                let html = `<div class="page-title">Banner Manager <button class="btn btn-ghost" onclick="location.hash='#dashboard'">Back</button></div>
+                <div class="card">
+                    <div class="flex gap-10" style="margin-bottom: 10px;">
+                        <input id="ban-url" class="input-field" placeholder="Image URL">
+                        <select id="ban-days" class="input-field" style="width:100px;">
+                            <option value="1">1 Day</option>
+                            <option value="3">3 Days</option>
+                            <option value="7">7 Days</option>
+                            <option value="14">14 Days</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="Actions.addBanner()">Add</button>
+                    </div>
+                    <p style="font-size:12px; color:var(--text-light);">Banners expire after selected days (simulated).</p>
+                </div>`;
+                
+                DB.data.banners.forEach((b, i) => {
+                    html += `
+                    <div class="card" style="padding:0; height:120px; position:relative; overflow:hidden;">
+                        <img src="${b.img}" onerror="this.src='https://via.placeholder.com/150/1e1e1e/9e9e9e?text=INVALID_IMG';" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+                        <button class="btn btn-danger" style="position:absolute; top:10px; right:10px; font-size:11px; padding:6px 10px;" onclick="Actions.delBanner(${i})"><i class="fas fa-trash"></i> Delete</button>
+                        <div style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.5); color:white; padding:4px 8px; border-radius:4px; font-size:11px;">Expires: ${b.expires ? new Date(b.expires).toLocaleDateString() : 'Never'}</div>
+                    </div>`;
+                });
+                el.innerHTML = html;
+            },
+
+            settings: (el) => {
+                const isOn = !DB.data.config.maintenance;
+                el.innerHTML = `
+                <div class="page-title">System Configuration <button class="btn btn-ghost" onclick="location.hash='#dashboard'">Back</button></div>
+                <div class="card text-center" style="padding:40px;">
+                    <i class="fas fa-power-off" style="font-size:50px; color:${isOn?'var(--success)':'var(--danger)'}; margin-bottom:20px;"></i>
+                    <h3 style="color:var(--text-main);">System Status: ${isOn?'ONLINE':'OFFLINE'}</h3>
+                    <p style="color:var(--text-light); margin-bottom:25px;">Toggle Maintenance Mode to control user access.</p>
+                    <button class="btn ${isOn?'btn-danger':'btn-success'}" onclick="Actions.toggleMaint()">
+                        SWITCH TO ${isOn?'MAINTENANCE':'LIVE'} MODE
+                    </button>
+                </div>
+                <div class="card" style="margin-top:15px;">
+                    <h4 style="margin-bottom:10px; color:var(--primary);">Maintenance Message</h4>
+                    <div class="input-group">
+                        <label class="input-label">Message to display during maintenance</label>
+                        <textarea id="maint-msg" class="input-field" rows="3">${DB.data.config.maintMsg}</textarea>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="Actions.saveMaintMsg()">Save Message</button>
+                </div>`;
+            },
+            
+            sendDialog: (el) => {
+                const dialog = DB.data.config.dialog || {};
+                el.innerHTML = `
+                <div class="page-title">Broadcast Global Dialogue <button class="btn btn-ghost" onclick="location.hash='#dashboard'">Back</button></div>
+                <div class="card" style="border:2px solid var(--accent);">
+                    <h3 style="margin-bottom:15px; color:var(--accent);"><i class="fas fa-bullhorn"></i> Send Popup to All Users</h3>
+                    
+                    <div class="input-group">
+                        <label class="input-label">1. Top Bold Message (Optional)</label>
+                        <input id="d-top-msg" class="input-field" value="${dialog.topMsg || ''}" placeholder="E.g., SYSTEM ALERT: URGENT MESSAGE!">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">2. Main Message</label>
+                        <textarea id="d-main-msg" class="input-field" rows="3" placeholder="This is the main message content">${dialog.mainMsg || ''}</textarea>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">3. Image URL (Optional)</label>
+                        <input id="d-img-url" class="input-field" value="${dialog.imgUrl || ''}" placeholder="e.g., https://i.ibb.co/k22dzznf/x.jpg">
+                    </div>
+                    <div class="input-group flex gap-15 center" style="margin-top:20px;">
+                        <button class="btn btn-success" style="flex:1; justify-content:center;" onclick="Actions.saveDialog(true)"><i class="fas fa-eye"></i> PREVIEW & SEND</button>
+                        <button class="btn btn-danger" style="flex:1; justify-content:center;" onclick="Actions.saveDialog(false)"><i class="fas fa-trash"></i> DISABLE/CLEAR</button>
+                    </div>
+                    <p style="font-size:12px; color:var(--text-light); margin-top:10px;">The popup will be shown once to users until cleared.</p>
+                </div>`;
+            },
+
+            // New System Operations View
+            systemOperations: (el) => {
+                document.getElementById('system-ops-screen').classList.remove('hidden');
+                document.getElementById('system-ops-screen').classList.add('show');
+                
+                const outputEl = document.getElementById('system-ops-output');
+                outputEl.innerText = ''; // Clear previous output
+                
+                // Simulate typing animation
+                const sequence = [
+                    "Initializing System Protocols...",
+                    "Establishing Secure Connection...",
+                    "Accessing Core Modules...",
+                    "Verifying Authorization...",
+                    "Authentication Successful.",
+                    "Welcome, Master Sasuke.",
+                    "Control Manager Activated.",
+                    "",
+                    "STATUS:",
+                    `  >> Website: ${DB.data.config.maintenance ? 'OFFLINE' : 'ONLINE'}`,
+                    `  >> Orders: ${DB.data.orders.length} total, ${DB.data.ordersToday} today`,
+                    `  >> Users: ${DB.data.totalUsers} registered`,
+                    `  >> Products: ${DB.data.products.length} in inventory`,
+                    "",
+                    "READY FOR COMMANDS."
+                ];
+                let lineIndex = 0;
+                let charIndex = 0;
+                let typingInterval;
+
+                AudioCues.systemInit.play(); // Play system init sound
+
+                function typeLine() {
+                    if (lineIndex < sequence.length) {
+                        if (charIndex < sequence[lineIndex].length) {
+                            outputEl.innerText += sequence[lineIndex].charAt(charIndex);
+                            charIndex++;
+                        } else {
+                            outputEl.innerText += '\n'; // New line
+                            lineIndex++;
+                            charIndex = 0;
+                            // Add a short delay between lines
+                            setTimeout(typeLine, 300); 
+                            return;
+                        }
+                        typingInterval = setTimeout(typeLine, 30); // Typing speed
+                    } else {
+                        // Once typing is done, show a 'Press any key to exit' message and listen for input
+                        outputEl.innerText += "\n\nPRESS ANY KEY TO EXIT...";
+                        document.addEventListener('keydown', Actions.exitSystemOperations, { once: true });
+                        AudioCues.systemInit.pause(); // Stop looping sound after sequence
+                        AudioCues.systemInit.currentTime = 0; // Reset sound
+                    }
+                }
+                typeLine(); // Start typing
+            }
+        };
+
+        /* 
+        ========================================
+        5. ACTIONS
+        ======================================== 
+        */
+        const Actions = {
+            orderStatus: (id, status) => {
+                AudioCues.buttonClick.play();
+                const o = DB.data.orders.find(x => x.id === id);
+                if(o && o.status !== status) {
+                    o.status = status;
+                    DB.save('orders');
+                    Router.render(`orders=${id}`);
+                    App.toast(`Order Marked as ${status}`);
+                } else if(o) {
+                    App.toast(`Order is already ${status}`);
+                }
+            },
+            
+            acceptOrder: (id) => {
+                AudioCues.buttonClick.play();
+                const o = DB.data.orders.find(x => x.id === id);
+                if(!o || o.status === 'Accepted' || !o.user) {
+                     return App.toast(o && o.status === 'Accepted' ? 'Order already accepted.' : 'Order not found or already processed.');
+                }
+                
+                if(!confirm('Are you sure you want to accept this order and generate a receipt?')) return;
+                
+                // Update status
+                o.status = 'Accepted';
+                DB.save('orders');
+                
+                // Generate Receipt Content
+                const userNamePart = o.user.name.split(' ')[0] || 'User';
+                const linkUrl = `${window.location.origin}/#chat=Admin`; // Simplified link for chat
+                const receipt = `
+__________________________________________
+🇮🇳🅽🅰🆃🅸🅾🅽🅰🅻 🆂🆃🅾🆁🅴🇮🇳
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🪪𝗗𝗮𝘁𝗲: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
+🪪[@${userNamePart}] 𝘆𝗼𝘂𝗿 𝗽𝗿𝗼𝗱𝘂𝗰𝘁 ${o.productName || 'N/A'} 𝗵𝗮𝘀 𝗯𝗲𝗲𝗻 𝗮𝗰𝗰𝗲𝗽𝘁𝗲𝗱.
+🪪𝗧𝗼𝘁𝗮𝗹 𝗮𝗺𝗺𝗼𝘂𝗻𝘁: ₹${o.total || 'N/A'} 💵
+✅ product will be delivered till 7 working days
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🪪𝗬𝗼𝘂𝗿 𝗰𝗼𝗻𝘁𝗮𝗰𝘁 𝗻𝘂𝗺𝗯𝗲𝗿: ${o.user.phone || 'N/A'}
+🪪𝗬𝗼𝘂𝗿 𝗲𝗺𝗮𝗶𝗹 𝗮𝗱𝗱𝗿𝗲𝘀𝘀: ${o.user.email || 'N/A'}
+🪪𝗬𝗼𝘂𝗿 𝗴𝗶𝘃𝗲𝗻 𝗮𝗱𝗱𝗿𝗲𝘀𝘀: ${o.user.address ? o.user.address.replace(/, /g, '\n  ') : 'N/A'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💫 𝗜𝗳 𝘆𝗼𝘂 𝗱𝗼 𝗻𝗼𝘁 𝗼𝗿𝗱𝗲𝗿 𝗮𝗻𝘆𝘁𝗵𝗶𝗻𝗴 𝘁𝗵𝗲𝗻 𝘆𝗼𝘂 𝗰𝗮𝗻 𝗰𝗮𝗻𝗰𝗹𝗲 𝘆𝗼𝘂𝗿 𝗼𝗿𝗱𝗲𝗿 𝗼𝗻 𝗼𝘂𝗿 𝘄𝗲𝗯𝘀𝗶𝘁𝗲 𝗯𝘆 𝗱𝗶𝗿𝗲𝗰𝘁𝗹𝘆 𝗰𝗼𝗻𝘁𝗮𝗰𝘁𝗶𝗻𝗴 𝘁𝗼 𝗮𝗱𝗺𝗶𝗻:
+𝗟𝗶𝗻𝗸: ${linkUrl}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Thank you ${userNamePart} for trusting us, stay connected to us. ✨
+`;
+                
+                document.getElementById('receipt-content').innerText = receipt;
+                document.getElementById('receipt-dialog').classList.remove('hidden');
+                App.copyToClipboard(receipt); // Auto-copy
+                
+                Router.render(`orders=${id}`); // Re-render to show updated status
+            },
+            
+            closeReceiptDialog: () => {
+                 AudioCues.buttonClick.play();
+                 document.getElementById('receipt-dialog').classList.add('hidden');
+            },
+
+            saveProduct: (id) => {
+                AudioCues.buttonClick.play();
+                const name = document.getElementById('p-name').value;
+                const price = document.getElementById('p-price').value;
+                const cat = document.getElementById('p-cat').value;
+                if(!name || !price || !cat) return App.toast('Name, Price & Category Required');
+
+                const imgs = Array.from(document.querySelectorAll('.img-in')).map(i => i.value).filter(v => v);
+                const p = {
+                    id: id || 'P'+Date.now().toString().substring(0, 10),
+                    name, price: Number(price),
+                    mrp: Number(document.getElementById('p-mrp').value),
+                    discount: Number(document.getElementById('p-disc').value),
+                    delivery: Number(document.getElementById('p-del').value),
+                    desc: document.getElementById('p-desc').value,
+                    longDesc: document.getElementById('p-long-desc').value,
+                    rating: Number(document.getElementById('p-rating').value),
+                    category: cat,
+                    images: imgs.length ? imgs : ['https://via.placeholder.com/150/00e676/000000?text=NO_IMG']
+                };
+
+                const existingIndex = DB.data.products.findIndex(x => x.id === p.id);
+                
+                if(existingIndex !== -1) {
+                    DB.data.products[existingIndex] = p;
+                } else {
+                    DB.data.products.push(p);
+                }
+                
+                DB.save('products');
+                location.hash = '#products';
+                App.toast('Inventory Updated');
+            },
+            
+            filterProducts: (query) => {
+                query = query.toLowerCase();
+                const items = document.querySelectorAll('.prod-item');
+                items.forEach(item => {
+                    const name = item.dataset.name;
+                    const id = item.dataset.id;
+                    item.style.display = (name.includes(query) || id.includes(query)) ? 'flex' : 'none';
+                });
+            },
+            
+            delProduct: (id) => {
+                AudioCues.buttonClick.play();
+                if(confirm('Delete permanently? This will affect all user carts/wishlists!')) {
+                    DB.data.products = DB.data.products.filter(p => p.id !== id);
+                    DB.save('products');
+                    Router.render('products');
+                    App.toast('Product Deleted');
+                }
+            },
+            
+            reply: (uid) => {
+                AudioCues.buttonClick.play();
+                const txt = document.getElementById('reply-txt').value;
+                if(!txt) return;
+                
+                // Find latest msg from user to attach reply
+                const msgs = DB.data.messages.filter(m => m.userId === uid).reverse();
+                let replied = false;
+                
+                for(let m of msgs) {
+                    if(!m.reply) {
+                        m.reply = txt;
+                        m.replyTime = new Date().toISOString();
+                        replied = true;
+                        break;
+                    }
+                }
+                
+                if(!replied) {
+                    // If all user messages have replies, push a new system message
+                    DB.data.messages.push({
+                        id: Date.now(), userId: uid, text: "[Admin Initiated]", time: new Date().toISOString(), reply: txt, replyTime: new Date().toISOString()
+                    });
+                }
+                
+                DB.save('messages');
+                document.getElementById('reply-txt').value = '';
+                Router.render(`chat=${uid}`);
+                App.toast('Reply Sent');
+            },
+            
+            addBanner: () => {
+                AudioCues.buttonClick.play();
+                const url = document.getElementById('ban-url').value;
+                const days = document.getElementById('ban-days').value;
+                if(url) {
+                    const expiry = new Date();
+                    expiry.setDate(expiry.getDate() + Number(days));
+                    DB.data.banners.push({img:url, active:true, expires: expiry.toISOString()});
+                    DB.save('banners');
+                    Router.render('banners');
+                    App.toast('Banner Added');
+                } else {
+                    App.toast('Please enter a valid URL.');
+                }
+            },
+            
+            delBanner: (i) => {
+                AudioCues.buttonClick.play();
+                DB.data.banners.splice(i, 1);
+                DB.save('banners');
+                Router.render('banners');
+                App.toast('Banner Deleted');
+            },
+            
+            toggleMaint: () => {
+                AudioCues.buttonClick.play();
+                DB.data.config.maintenance = !DB.data.config.maintenance;
+                DB.save('config');
+                Router.render('settings');
+                App.toast('System Status Updated');
+            },
+            
+            saveMaintMsg: () => {
+                AudioCues.buttonClick.play();
+                DB.data.config.maintMsg = document.getElementById('maint-msg').value;
+                DB.save('config');
+                App.toast('Maintenance Message Saved');
+            },
+            
+            saveDialog: (send) => {
+                AudioCues.buttonClick.play();
+                if (send) {
+                    const topMsg = document.getElementById('d-top-msg').value;
+                    const mainMsg = document.getElementById('d-main-msg').value;
+                    const imgUrl = document.getElementById('d-img-url').value;
+                    
+                    if (!mainMsg) return App.toast('Main Message is Required to send a dialogue.');
+                    
+                    DB.data.config.dialog = { topMsg, mainMsg, imgUrl, active: true, sentAt: new Date().toISOString() };
+                    App.toast('Global Dialogue Sent!');
+                } else {
+                    DB.data.config.dialog = { active: false };
+                    App.toast('Global Dialogue Disabled/Cleared!');
+                }
+                DB.save('config');
+                Router.render('send-dialog');
+            },
+            
+            addImgField: () => {
+                AudioCues.buttonClick.play();
+                const i = document.createElement('input');
+                i.className = 'input-field img-in';
+                i.placeholder = 'Image URL';
+                i.style.marginTop = '5px';
+                document.getElementById('img-list').appendChild(i);
+            },
+
+            initSystemOperations: () => {
+                AudioCues.buttonClick.play();
+                Router.render('system-ops');
+            },
+            exitSystemOperations: (e) => {
+                // Remove the event listener to prevent multiple calls
+                document.removeEventListener('keydown', Actions.exitSystemOperations);
+                AudioCues.buttonClick.play();
+                const systemOpsScreen = document.getElementById('system-ops-screen');
+                systemOpsScreen.classList.remove('show');
+                systemOpsScreen.classList.add('hidden');
+                Router.render('dashboard'); // Go back to dashboard
+            }
+        };
+
+        // Init
+        window.addEventListener('load', () => {
+            DB.load();
+            Auth.check();
+        });
+
+    </script>
+</body>
+</html>

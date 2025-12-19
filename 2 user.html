@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>National Store | indian official shopping app</title>
+    <meta name="theme-color" content="#2874f0">
+    <meta name="description" content="India's Premium Reseller Hub">
+
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /*
+        ========================================
+        1. CORE DESIGN SYSTEM (NATIONAL STORE)
+        ========================================
+        */
+        :root {
+            --primary: #2874f0;
+            --primary-dark: #1e5bb0;
+            --secondary: #fb641b;
+            --yellow: #ffe500;
+            --success: #008C00;
+            --danger: #ff6161;
+            --text-main: #212121;
+            --text-sub: #878787;
+            --bg-body: #f1f2f4;
+            --bg-white: #ffffff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.1);
+            --shadow-float: 0 4px 16px rgba(0,0,0,0.15);
+            --header-height: 40px;
+            --trans-speed: 0.3s;
+        }
+
+        /* Global Styles */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-top: var(--header-height); overflow-x: hidden; }
+
+        /* Transition Animation Classes */
+        .page-content {
+            animation: fadeIn var(--trans-speed) ease-out forwards;
+            min-height: 90vh;
+            padding-bottom: 20px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(10px); }
+        }
+
+        /* Loaders */
+        .loader-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Utility Classes */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .center { align-items: center; justify-content: center; }
+        .between { justify-content: space-between; }
+        .w-full { width: 100%; }
+        .gap-10 { gap: 10px; }
+        .gap-15 { gap: 15px; }
+        .btn { border: none; padding: 12px 20px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-white { background: white; border: 1px solid #ddd; color: #333; }
+        .text-center { text-align: center; }
+
+        /*
+        ========================================
+        2. HEADER & NAVIGATION
+        ========================================
+        */
+        /* Home Header */
+        header.main-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height);
+            background: var(--primary); z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        header.hidden-scroll { transform: translateY(-100%); }
+
+        .logo-text { color: white; font-weight: 800; font-style: italic; font-size: 19px; }
+        .logo-text span { color: var(--yellow); font-size: 12px; } /* Yellow accent for 'Store' */
+
+        /* Fix for header actions/icons merging */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            /* Adjust gap to prevent merging, can be responsive */
+            gap: 12px; /* Reduced slightly for more space */
+        }
+        @media (min-width: 480px) { /* Larger gap on wider screens */
+            .header-actions {
+                gap: 20px;
+            }
+        }
+        .h-btn {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            white-space: nowrap; /* Prevent text wrapping */
+            padding: 4px 8px; /* Add a bit of padding for touch targets */
+            border-radius: 4px; /* Soften edges */
+            transition: background-color 0.2s ease;
+        }
+        .h-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        .h-icon {
+            position: relative;
+            color: white;
+            font-size: 20px;
+            padding: 4px; /* Ensure icon is clickable without text interference */
+            cursor: pointer;
+        }
+        .badge { position: absolute; top: -6px; right: -8px; background: var(--danger); color: white; font-size: 10px; padding: 2px 5px; border-radius: 10px; border: 1px solid white; }
+
+        /* Search Bar (Sticky below header) */
+        .search-container {
+            position: fixed; top: var(--header-height); left: 0; width: 100%;
+            background: var(--primary); padding: 0 16px 10px; z-index: 999;
+            transition: transform 0.3s;
+        }
+        .search-container.hidden-scroll { transform: translateY(-150%); }
+        .search-box { background: white; border-radius: 4px; display: flex; align-items: center; padding: 8px 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .search-box input { border: none; width: 100%; margin-left: 10px; font-size: 14px; }
+
+        /* Secondary Header (For inner pages) */
+        header.sub-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height);
+            background: var(--primary); z-index: 1000; color: white;
+            display: flex; align-items: center; gap: 15px; padding: 0 16px;
+        }
+
+        /*
+        ========================================
+        3. SIDEBAR
+        ========================================
+        */
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+        .sidebar {
+            position: fixed; top: 0; left: -300px; width: 280px; height: 100%;
+            background: white; z-index: 2100; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-user {
+            background: var(--primary); padding: 20px; color: white;
+            display: flex; align-items: center; gap: 15px;
+            border-bottom: 2px solid var(--primary-dark);
+        }
+        .sidebar-user .user-avatar {
+            width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+            border: 2px solid white; box-shadow: var(--shadow-sm);
+        }
+        .sidebar-user .user-info div { font-size: 13px; opacity: 0.9; }
+        .sidebar-user .user-info .user-name { font-weight: 700; font-size: 16px; }
+
+        .sidebar-menu { flex: 1; overflow-y: auto; padding: 10px 0; }
+        .menu-item {
+            padding: 14px 20px; font-size: 14px; color: #333;
+            display: flex; align-items: center; gap: 15px;
+            border-bottom: 1px solid #f5f5f5; cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .menu-item i { width: 20px; text-align: center; color: #777; font-size: 16px; }
+        .menu-item:hover { background: #f0f5ff; color: var(--primary); }
+        .menu-item:hover i { color: var(--primary); }
+        .menu-item:active { background: #e0e9ff; }
+        .menu-item-bottom { padding: 10px 0; border-top: 1px solid #eee; }
+
+
+        /*
+        ========================================
+        4. HOME COMPONENTS
+        ========================================
+        */
+        /* Slider FIX: Added scroll properties for manual swiping */
+        .hero-slider-container {
+            width: 95%;
+            margin: 10px auto;
+            height: 180px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #ddd;
+            position: relative;
+            box-shadow: var(--shadow-sm); /* Added shadow for visual depth */
+        }
+        .slides-wrapper {
+            display: flex;
+            height: 100%;
+            /* min-width and max-width are important for scroll-snap to work correctly with dynamic slides */
+            min-width: 100%;
+            max-width: 100%; /* Ensures it doesn't break parent layout */
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+            scroll-behavior: smooth;
+        }
+        .slides-wrapper::-webkit-scrollbar { display: none; } /* Hide scrollbar */
+        .slide {
+            flex-shrink: 0; /* Prevent slides from shrinking */
+            width: 100%; /* Each slide takes full width of its container (slides-wrapper) */
+            height: 100%;
+            scroll-snap-align: center;
+        }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .slider-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+        .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.5); border-radius: 50%; transition: 0.3s; }
+        .dot.active { background: white; width: 20px; border-radius: 4px; }
+
+        /* Categories Section */
+        .categories-scroll-wrapper {
+            display: flex; overflow-x: auto; padding: 10px; gap: 15px;
+            background: white; margin: 10px 0;
+            box-shadow: var(--shadow-sm);
+            border-radius: 8px; /* Soften edges */
+        }
+        .categories-scroll-wrapper::-webkit-scrollbar { display: none; }
+        .category-item {
+            display: flex; flex-direction: column; align-items: center;
+            min-width: 65px; cursor: pointer;
+        }
+        .category-icon-box {
+            width: 45px; height: 45px; background: #f0f5ff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary); margin-bottom: 5px; font-size: 18px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .category-item:active .category-icon-box { transform: scale(0.95); }
+        .category-item span { font-size: 10px; font-weight: 600; text-align: center; color: #555; }
+
+
+        /* Product Grid */
+        .section-title { padding: 15px 16px 5px; font-size: 18px; font-weight: 700; display: flex; justify-content: space-between; align-items: flex-end; }
+        .view-all-btn { font-size: 13px; color: var(--primary); background: #fff; border: 1px solid var(--primary); padding: 4px 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.2s, color 0.2s; }
+        .view-all-btn:hover { background-color: var(--primary); color: white; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 10px; }
+        @media(min-width: 768px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        .product-card {
+            background: white; border-radius: 4px; padding: 10px;
+            box-shadow: var(--shadow-sm); transition: 0.2s; position: relative;
+        }
+        .product-card:active { transform: scale(0.97); }
+        .p-img-box { height: 150px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; }
+        .p-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .p-title { font-size: 14px; font-weight: 500; height: 36px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .p-price-row { margin-top: 8px; display: flex; align-items: baseline; gap: 6px; }
+        .current-price { font-size: 16px; font-weight: 700; }
+        .mrp-price { font-size: 12px; text-decoration: line-through; color: var(--text-sub); }
+        .off-tag { font-size: 11px; color: var(--success); font-weight: 700; }
+
+        /*
+        ========================================
+        5. PRODUCT DETAILS & CHECKOUT
+        ========================================
+        */
+        /* PDP Slider FIX: Added scroll properties for manual swiping */
+        .pdp-slider-container {
+            height: 350px; position: relative; background: white; overflow: hidden;
+            padding-top: 10px; /* Add padding for product name */
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 10px; /* Space before next info block */
+        }
+        .pdp-product-name-top {
+            position: absolute; top: 10px; left: 16px; right: 16px;
+            font-size: 18px; font-weight: 600; color: var(--text-main);
+            z-index: 10; text-align: center;
+        }
+        .pdp-slider {
+            display: flex; height: 100%;
+            /* Updated to use flex-shrink: 0 and width: 100% on slides */
+            min-width: 100%;
+            max-width: 100%;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+        .pdp-slider::-webkit-scrollbar { display: none; } /* Hide scrollbar */
+        .pdp-slide {
+            flex-shrink: 0; /* Prevent slides from shrinking */
+            width: 100%; /* Each slide takes full width of its container (pdp-slider) */
+            height: 100%;
+            scroll-snap-align: center;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+        @media(min-width: 768px) {
+            .pdp-slide { min-width: 1000px; }
+        }
+
+        .pdp-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .pdp-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+        .pdp-dot { width: 8px; height: 8px; background: rgba(0,0,0,0.2); border-radius: 50%; transition: 0.3s; }
+        .pdp-dot.active { background: var(--primary); }
+
+        .pdp-info { padding: 16px; background: white; margin-bottom: 10px; border-radius: 4px; box-shadow: var(--shadow-sm); }
+        .delivery-txt { font-size: 13px; margin: 10px 0; background: #f0f5ff; padding: 10px; border-radius: 4px; }
+
+        /* Fixed Footer for PDP */
+        .pdp-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            display: flex; height: 55px; background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100;
+        }
+        .pdp-btn { flex: 1; border: none; font-weight: 600; font-size: 16px; cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
+        .pdp-btn:active { transform: scale(0.98); }
+        .btn-cart { background: white; color: #212121; border-top: 1px solid #eee; }
+        .btn-cart:hover { background: #f5f5f5; }
+        .btn-buy { background: var(--secondary); color: white; }
+        .btn-buy:hover { background: #e05b17; }
+
+
+        /* Checkout Form */
+        .form-group { margin-bottom: 15px; }
+        .form-label { font-size: 12px; color: var(--text-sub); margin-bottom: 4px; display: block; }
+        .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; background: white; }
+        .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(40,116,240,0.1); }
+
+        /*
+        ========================================
+        6. LOGIN & ORDERS
+        ========================================
+        */
+        .login-container {
+            display: flex; justify-content: center; align-items: center;
+            min-height: calc(100vh - var(--header-height));
+            padding: 20px;
+        }
+        .login-card {
+            background: white; padding: 30px 20px; border-radius: 12px;
+            box-shadow: var(--shadow-float); text-align: center;
+            width: 100%; max-width: 400px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .app-icon {
+            width: 80px; height: 80px; background: var(--primary); border-radius: 20px;
+            margin: 0 auto 20px; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 30px;
+            font-style: italic; font-weight: 800; overflow: hidden;
+        }
+        .app-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+        .login-card h2 { color: var(--primary); margin-bottom: 10px; font-size: 24px; }
+        .login-card p { color: #888; font-size: 14px; margin-bottom: 25px; }
+
+        .login-card .form-group { margin-bottom: 15px; text-align: left; }
+        .login-card .form-input {
+            padding: 14px; font-size: 16px; border-radius: 8px;
+            border: 1px solid #ddd; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .login-card .form-input:focus {
+            border-color: var(--primary); box-shadow: 0 0 0 3px rgba(40,116,240,0.2);
+        }
+
+        .login-card .btn {
+            height: 50px; border-radius: 8px; font-size: 17px;
+            margin-top: 15px; transition: background-color 0.2s, transform 0.2s;
+        }
+        .login-card .btn-primary { background: var(--primary); }
+        .login-card .btn-primary:hover { background: var(--primary-dark); }
+        .login-card .btn-primary:active { transform: scale(0.98); }
+
+        .login-card .signup-toggle {
+            margin-top: 20px; font-size: 13px; color: var(--primary);
+            cursor: pointer; font-weight: 600;
+        }
+        .login-card .signup-toggle:hover { text-decoration: underline; }
+
+        .order-item { background: white; padding: 15px; margin-bottom: 10px; border-radius: 4px; border-left: 5px solid #ddd; box-shadow: var(--shadow-sm); }
+        .st-Processing { border-color: orange; }
+        .st-Accepted { border-color: green; }
+        .st-Rejected { border-color: red; }
+
+        /*
+        ========================================
+        7. CHAT & DIALOGUE
+        ========================================
+        */
+        .chat-container { display: flex; flex-direction: column; height: calc(100vh - var(--header-height)); background: #fff; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-float); }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-bubble { max-width: 80%; padding: 10px 15px; border-radius: 18px; font-size: 14px; line-height: 1.4; }
+        .msg-user { background: #e6e6e6; align-self: flex-start; border-top-left-radius: 4px; }
+        .msg-admin { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-input-area { padding: 10px; border-top: 1px solid #f1f2f4; display: flex; gap: 10px; background: #f9f9f9; }
+
+        /* Global Dialogue */
+        #global-dialog { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 5000; display: none; align-items: center; justify-content: center; animation: fadeIn 0.3s forwards; }
+        #dialog-box { background: white; width: 90%; max-width: 350px; border-radius: 12px; padding: 25px; text-align: center; box-shadow: var(--shadow-float); }
+        .dialog-top-msg { font-weight: 800; font-size: 18px; color: var(--secondary); margin-bottom: 10px; }
+        .dialog-main-msg { font-size: 14px; color: #444; margin-bottom: 15px; }
+        .dialog-img-container { margin: 15px 0; border-radius: 8px; overflow: hidden; }
+        .dialog-img-container img { width: 100%; height: auto; }
+        .dialog-ok-btn { width: 100%; background: var(--primary); color: white; font-weight: 700; border-radius: 8px; }
+
+        /*
+        ========================================
+        8. FOOTER
+        ========================================
+        */
+        footer {
+            background: #172337;
+            color: white;
+            padding: 30px 20px 20px; /* Increased padding-bottom */
+            margin-top: 30px;
+            font-size: 13px; /* Slightly larger font */
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            border-top: 1px solid #2a3b5a; /* Subtle border */
+        }
+        .footer-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px; /* Increased gap */
+            margin-bottom: 25px;
+        }
+        .f-head {
+            color: #b0b0b0; /* Lighter grey for headers */
+            margin-bottom: 12px; /* Increased margin */
+            font-weight: 700; /* Bolder */
+            font-size: 14px; /* Larger font */
+        }
+        .f-link {
+            display: block;
+            color: #e0e0e0; /* Slightly lighter links */
+            margin-bottom: 8px; /* Increased margin */
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .f-link:hover {
+            color: var(--yellow); /* Hover effect */
+        }
+        .footer-bottom-section {
+            text-align: center;
+            border-top: 1px solid #3a475e; /* Thicker, slightly lighter border */
+            padding-top: 20px;
+            color: #c0c0c0; /* Lighter copyright text */
+            font-size: 11px;
+        }
+
+        /* Animation specific */
+        .blink { animation: blinker 2s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* Error message for login/signup */
+        .error-message {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            text-align: left;
+            padding-left: 5px;
+        }
+    </style>
+</head>
+<body id="app-body">
+
+    <!-- 1. LOADING & DIALOGS -->
+    <div id="loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- 1.1 GLOBAL DIALOGUE POPUP -->
+    <div id="global-dialog" class="hidden">
+        <div id="dialog-box">
+            <i class="fas fa-magic" style="font-size: 30px; color: var(--secondary); margin-bottom: 10px;"></i>
+            <div id="dialog-top-msg" class="dialog-top-msg"></div>
+            <div id="dialog-main-msg" class="dialog-main-msg"></div>
+            <div id="dialog-img-container" class="dialog-img-container hidden"></div>
+            <button class="btn dialog-ok-btn" onclick="UI.closeGlobalDialog()">OK, GOT IT</button>
+        </div>
+    </div>
+
+    <!-- 1.2 MAINTENANCE OVERLAY -->
+    <div id="maint-overlay" class="loader-overlay hidden" style="background:var(--primary-dark);">
+        <img src="https://i.ibb.co/k22dzznf/x.jpg" alt="Logo" style="width: 80px; height: 80px; margin-bottom: 20px; border-radius: 20px;">
+        <i class="fas fa-tools" style="font-size: 50px; color: var(--yellow); margin-bottom: 20px;"></i>
+        <h2 style="color: white; margin-bottom: 10px;">MAINTENANCE MODE</h2>
+        <p id="maint-message" style="color: #ccc; font-size: 14px; text-align: center; padding: 0 20px;">Website is currently under maintenance and will start soon...</p>
+    </div>
+
+    <!-- 2. MAIN HEADER (Home Only) -->
+    <header class="main-header" id="header-home">
+        <div class="header-actions">
+            <i class="fas fa-bars h-btn" onclick="UI.toggleSidebar()"></i>
+            <div class="logo-text" id="main-logo-text">National<span>Store</span></div>
+        </div>
+        <div class="header-actions">
+            <!-- My Orders and Cart in Header for logged in users, Login for guests -->
+            <div id="header-auth-buttons" class="flex gap-15 center">
+                <!-- Content will be rendered by JS based on Auth status -->
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. SEARCH (Home Only) -->
+    <div class="search-container" id="search-bar">
+        <div class="search-box">
+            <i class="fas fa-search" style="color:#878787"></i>
+            <input type="text" placeholder="Search for products, brands and more" onkeyup="UI.search(this.value)">
+        </div>
+    </div>
+
+    <!-- 4. SUB HEADER (Inner Pages) -->
+    <header class="sub-header hidden" id="header-sub">
+        <i class="fas fa-arrow-left" style="font-size:18px;" onclick="history.back()"></i>
+        <div style="font-weight:600; font-size:16px;" id="page-title">Page Title</div>
+        <div class="header-actions" style="margin-left:auto;">
+            <div class="h-icon" onclick="Router.navigate('cart')">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="badge hidden" id="cart-badge-sub">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 5. SIDEBAR -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="UI.toggleSidebar(false)"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-user">
+            <img src="https://i.ibb.co/k22dzznf/x.jpg" alt="Logo" class="user-avatar" id="sidebar-user-avatar">
+            <div class="user-info">
+                <div class="user-name" id="sb-name">Guest</div>
+                <div id="sb-phone"></div>
+                <div id="sb-welcome-msg">Welcome to National Store</div>
+            </div>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item" onclick="Router.navigate('home')"><i class="fas fa-home"></i> Home</div>
+            <div class="menu-item" onclick="Router.navigate('all-products')"><i class="fas fa-th-large"></i> All Products</div>
+            <div class="menu-item" onclick="Auth.check() ? Router.navigate('orders') : Router.navigate('login')"><i class="fas fa-box"></i> My Orders</div>
+            <div class="menu-item" onclick="Router.navigate('cart')"><i class="fas fa-shopping-cart"></i> My Cart</div>
+            <div class="menu-item" onclick="Router.navigate('wishlist')"><i class="fas fa-heart"></i> Wishlist</div>
+            <div class="menu-item" onclick="App.showCoins()"><i class="fas fa-coins" style="color:gold;"></i> National Coins</div>
+            <div class="menu-item" onclick="App.openChat()"><i class="fab fa-whatsapp" style="color:green;"></i> Customer Care</div>
+            <div class="menu-item" onclick="Router.navigate('chat')"><i class="fas fa-comment-dots" style="color:var(--primary);"></i> Contact Owner</div>
+        </div>
+        <div class="menu-item-bottom">
+            <div class="menu-item" id="sidebar-logout-btn" onclick="Auth.logout()"><i class="fas fa-power-off" style="color:var(--danger);"></i> Logout</div>
+            <div class="menu-item" onclick="App.contactDev()"><i class="fab fa-telegram-plane" style="color:#0088cc;"></i> Contact Dev</div>
+        </div>
+    </div>
+
+    <!-- 6. MAIN CONTENT AREA -->
+    <main id="app-view" class="page-content" style="padding-top: 50px;"></main>
+
+    <!-- 7. FOOTER -->
+    <footer id="main-footer">
+        <div class="footer-links">
+            <div>
+                <div class="f-head">ABOUT</div>
+                <div class="f-link" onclick="Router.navigate('about')">About Us</div>
+                <div class="f-link" onclick="App.openChat()">Contact Us</div>
+            </div>
+            <div>
+                <div class="f-head">POLICY</div>
+                <div class="f-link" onclick="Router.navigate('policy=return')">Return Policy</div>
+                <div class="f-link" onclick="Router.navigate('policy=terms')">Terms of Use</div>
+                <div class="f-link" onclick="Router.navigate('policy=privacy')">Privacy</div>
+            </div>
+        </div>
+        <div class="footer-bottom-section">
+            &copy; 2025 National Store Inc. | Dev: sasuke 💻
+        </div>
+    </footer>
+
+    <!-- FIREBASE SDKS -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
+    <script>
+        // --- FIREBASE INITIALIZATION ---
+        // Placeholder for Firebase configuration and initialization
+        // To use Firebase, uncomment the following lines and replace with your actual config
+        const firebaseConfig = {
+          apiKey: "AIzaSyBYZY37BMidIcCfFafxscuMsEDar0I4w0M",
+          authDomain: "pyhost1.firebaseapp.com",
+          databaseURL: "https://pyhost1-default-rtdb.firebaseio.com",
+          projectId: "pyhost1",
+          storageBucket: "pyhost1.firebasestorage.app",
+          messagingSenderId: "166734993117",
+          appId: "1:166734993117:web:80013e3799a5ecc1d5ed34"
+        };
+
+        // Initialize Firebase (simulated reference to the real Firebase object)
+        // let FIREBASE_APP;
+        // let FIREBASE_DB;
+        // if (typeof firebase !== 'undefined') {
+        //     FIREBASE_APP = firebase.initializeApp(firebaseConfig);
+        //     FIREBASE_DB = FIREBASE_APP.database();
+        // }
+
+
+        /*
+        ========================================
+        1. DATA & STATE MANAGEMENT
+        ========================================
+        */
+        const Store = {
+            storageKeys: {
+                products: 'ns_products',
+                orders: 'ns_orders',
+                cart: 'ns_cart',
+                wishlist: 'ns_wishlist',
+                messages: 'ns_messages',
+                user: 'ns_user',
+                users: 'ns_users', // Registered users with PINs
+                config: 'ns_config',
+                banners: 'ns_banners'
+            },
+            data: {
+                products: [],
+                orders: [],
+                cart: [],
+                wishlist: [],
+                messages: [], // User messages
+                user: null,
+                coins: 100,
+                users: [], // To store registered users with PINs
+            },
+            config: { maintenance: false, maintMsg: "Website under maintenance, will be live soon!", dialog: null },
+
+            save: () => {
+                const keys = Store.storageKeys;
+                localStorage.setItem(keys.cart, JSON.stringify(Store.data.cart));
+                localStorage.setItem(keys.wishlist, JSON.stringify(Store.data.wishlist));
+                localStorage.setItem(keys.user, JSON.stringify(Store.data.user));
+                localStorage.setItem(keys.orders, JSON.stringify(Store.data.orders));
+                localStorage.setItem(keys.messages, JSON.stringify(Store.data.messages));
+                localStorage.setItem(keys.users, JSON.stringify(Store.data.users)); // Save registered users
+
+                UI.updateBadges();
+                UI.updateHeaderAuthButtons();
+                UI.updateSidebarUser();
+            },
+
+            load: () => {
+                const keys = Store.storageKeys;
+
+                Store.data.products = JSON.parse(localStorage.getItem(keys.products)) || [];
+                Store.data.orders = JSON.parse(localStorage.getItem(keys.orders)) || [];
+                Store.data.cart = JSON.parse(localStorage.getItem(keys.cart)) || [];
+                Store.data.wishlist = JSON.parse(localStorage.getItem(keys.wishlist)) || [];
+                Store.data.messages = JSON.parse(localStorage.getItem(keys.messages)) || [];
+                Store.data.user = JSON.parse(localStorage.getItem(keys.user)) || null;
+                Store.data.users = JSON.parse(localStorage.getItem(keys.users)) || []; // Load registered users
+
+                Store.config = JSON.parse(localStorage.getItem(keys.config)) || { maintenance: false, maintMsg: "Website under maintenance, will be live soon!", dialog: null };
+
+                // Seed Dummy Data if empty
+                if(Store.data.products.length === 0) {
+                    const dummyProducts = [
+                        {id:'P123456789', name:'Premium Cotton T-Shirt for Men', price:499, mrp:999, discount:50, category:'Fashion', images:['https://via.placeholder.com/400x400/2874f0/fff?text=T-Shirt','https://via.placeholder.com/400x400/fb641b/fff?text=Back'], delivery:40, desc:'High quality cotton t-shirt.', longDesc:'High quality cotton t-shirt with excellent breathability. Perfect for everyday wear. Available in multiple colours.', rating: 5},
+                        {id:'P223456789', name:'Wireless Earbuds Pro with ANC', price:1299, mrp:2999, discount:56, category:'Electronics', images:['https://via.placeholder.com/400x400/333/fff?text=Buds', 'https://via.placeholder.com/400x400/000/fff?text=Buds+Case'], delivery:0, desc:'Noise cancelling buds.', longDesc:'Experience superior sound quality with active noise cancellation. Long lasting battery life and comfortable fit.', rating: 4},
+                        {id:'P323456789', name:'Smart Watch Gen 5 AMOLED', price:2499, mrp:5999, discount:60, category:'Electronics', images:['https://via.placeholder.com/400x400/000/fff?text=Watch'], delivery:0, desc:'AMOLED Display watch.', longDesc:'AMOLED Display smart watch with heart rate monitoring and 10+ sports modes. Stay connected on the go.', rating: 5},
+                        {id:'P423456789', name:'Stylish Denim Jeans', price:899, mrp:1800, discount:50, category:'Fashion', images:['https://via.placeholder.com/400x400/607d8b/fff?text=Jeans'], delivery:50, desc:'Comfortable and stylish denim jeans.', longDesc:'Classic fit denim jeans, perfect for casual wear. Made with durable fabric for long-lasting comfort.', rating: 4},
+                        {id:'P523456789', name:'Portable Bluetooth Speaker', price:799, mrp:1500, discount:46, category:'Electronics', images:['https://via.placeholder.com/400x400/795548/fff?text=Speaker'], delivery:30, desc:'Powerful sound in a compact design.', longDesc:'Take your music anywhere with this portable Bluetooth speaker. Features deep bass and clear highs for an an immersive audio experience.', rating: 4}
+                    ];
+                    Store.data.products = dummyProducts;
+                    localStorage.setItem(keys.products, JSON.stringify(dummyProducts));
+                }
+
+                if (Store.config.maintenance) {
+                    UI.showMaintenance(Store.config.maintMsg);
+                } else {
+                    UI.checkGlobalDialog();
+                }
+
+                UI.updateBadges();
+                UI.updateHeaderAuthButtons();
+                UI.updateSidebarUser();
+            },
+            init: () => {
+                Store.load();
+            }
+        };
+
+        /*
+        ========================================
+        2. ROUTER & NAVIGATION
+        ========================================
+        */
+        const Router = {
+            current: 'home',
+            navigate: (hash) => {
+                const main = document.getElementById('app-view');
+                // Apply fadeOut animation before changing content
+                main.style.animation = 'fadeOut var(--trans-speed) ease-out forwards';
+
+                // Clear any existing sliders to prevent issues on re-render
+                UI.destroySliders();
+
+                setTimeout(() => {
+                    window.location.hash = hash;
+                    // The handleRoute will apply the fadeIn animation to the new content
+                }, parseFloat(getComputedStyle(main).animationDuration) * 1000); // Wait for fadeOut to complete
+            },
+            handleRoute: () => {
+                if (Store.config.maintenance) return;
+
+                const hash = window.location.hash.slice(1) || 'home';
+                const [page, param] = hash.split('=');
+                Router.current = page;
+
+                const app = document.getElementById('app-view');
+                const homeHeader = document.getElementById('header-home');
+                const subHeader = document.getElementById('header-sub');
+                const searchBar = document.getElementById('search-bar');
+                const footer = document.getElementById('main-footer');
+
+                window.scrollTo(0,0);
+
+                // Header Logic
+                const isInnerPage = ['login', 'product', 'checkout', 'cart', 'all-products', 'orders', 'about', 'policy', 'wishlist', 'chat'].includes(page);
+
+                homeHeader.classList.toggle('hidden', isInnerPage);
+                searchBar.classList.toggle('hidden', isInnerPage || page !== 'home');
+                subHeader.classList.toggle('hidden', !isInnerPage);
+
+                app.style.paddingTop = page === 'home' ? '50px' : '10px';
+                footer.classList.toggle('hidden', isInnerPage && page !== 'about' && page !== 'policy' && page !== 'chat');
+
+                // Render Views
+                if(page === 'login') Views.login(app);
+                else if(page === 'product') Views.product(app, param);
+                else if(page === 'checkout') Views.checkout(app, param);
+                else if(page === 'cart') Views.cart(app);
+                else if(page === 'all-products') Views.allProducts(app);
+                else if(page === 'orders') Views.orders(app);
+                else if(page === 'chat') Views.chat(app);
+                else if(page === 'about') Views.static(app, 'About Us', 'Welcome to National Store. We are India\'s premium reseller hub connecting sellers with buyers. Our goal is to provide quality products at the best prices.');
+                else if(page === 'policy') Views.static(app, 'Policy', 'Policy details here... Secure payments, 7 day returns, Data Privacy assured. For full details, contact support.');
+                else if(page === 'wishlist') Views.wishlist(app);
+                else Views.home(app);
+
+                // Apply fadeIn to the new content
+                app.style.animation = 'fadeIn var(--trans-speed) ease-out forwards';
+
+                UI.toggleSidebar(false); // Close sidebar if open
+            },
+            // Re-render method for local updates without full hashchange navigation
+            render: (page, param) => {
+                const app = document.getElementById('app-view');
+                app.style.animation = 'fadeOut 0.1s forwards'; // Quick fade out for re-render
+
+                UI.destroySliders(); // Destroy sliders before re-rendering section
+
+                setTimeout(() => {
+                    if(page === 'login') Views.login(app);
+                    else if(page === 'product') Views.product(app, param);
+                    else if(page === 'checkout') Views.checkout(app, param);
+                    else if(page === 'cart') Views.cart(app);
+                    else if(page === 'all-products') Views.allProducts(app);
+                    else if(page === 'orders') Views.orders(app);
+                    else if(page === 'chat') Views.chat(app);
+                    else if(page === 'about') Views.static(app, 'About Us', 'Welcome to National Store. We are India\'s premium reseller hub connecting sellers with buyers. Our goal is to provide quality products at the best prices.');
+                    else if(page === 'policy') Views.static(app, 'Policy', 'Policy details here... Secure payments, 7 day returns, Data Privacy assured. For full details, contact support.');
+                    else if(page === 'wishlist') Views.wishlist(app);
+                    else Views.home(app);
+
+                    app.style.animation = 'fadeIn 0.2s forwards'; // Quick fade in
+                }, 100);
+            }
+        };
+
+        /*
+        ========================================
+        3. VIEW COMPONENTS (HTML GENERATORS)
+        ========================================
+        */
+        const Views = {
+            home: (el) => {
+                const banners = JSON.parse(localStorage.getItem(Store.storageKeys.banners)) || [{img:'https://via.placeholder.com/800x400/2874f0/fff?text=Big+Sale+Live'}];
+                const categories = [
+                    {name:'Mobiles', icon:'fas fa-mobile-alt'}, {name:'Fashion', icon:'fas fa-tshirt'},
+                    {name:'Electronics', icon:'fas fa-plug'}, {name:'Home', icon:'fas fa-couch'},
+                    {name:'Beauty', icon:'fas fa-spa'}, {name:'Books', icon:'fas fa-book'},
+                    {name:'Appliances', icon:'fas fa-blender'}
+                ];
+
+                let html = `
+                <!-- Banners -->
+                <div class="hero-slider-container">
+                    <div class="hero-slider" id="home-slider" style="position:relative;">
+                        <div class="slides-wrapper" id="slider-track">
+                            ${banners.map(b => `<div class="slide"><img src="${b.img}"></div>`).join('')}
+                        </div>
+                        <div class="slider-dots" id="slider-dots"></div>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="categories-scroll-wrapper">
+                    ${categories.map(c => `
+                        <div class="category-item" onclick="UI.search('${c.name}')">
+                            <div class="category-icon-box"><i class="${c.icon}"></i></div>
+                            <span>${c.name}</span>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <!-- Trending Products -->
+                <div class="section-title">
+                    <span>Trending Now</span>
+                    <button class="view-all-btn" onclick="Router.navigate('all-products')">View All</button>
+                </div>
+                <div class="product-grid">`;
+
+                Store.data.products.slice(0, 4).forEach(p => {
+                    html += Components.productCard(p);
+                });
+                html += `</div>`;
+                el.innerHTML = html;
+
+                setTimeout(() => UI.initSlider('slider-track', 'home'), 100);
+            },
+
+            allProducts: (el) => {
+                document.getElementById('page-title').innerText = 'All Products';
+                let html = `<div class="product-grid" style="padding-top:20px;">`;
+                Store.data.products.forEach(p => html += Components.productCard(p));
+                html += `</div>`;
+                el.innerHTML = html;
+            },
+
+            product: (el, id) => {
+                const p = Store.data.products.find(x => x.id === id);
+                if(!p) return Router.navigate('home');
+
+                document.getElementById('page-title').innerText = p.name;
+
+                // Related logic
+                const related = Store.data.products.filter(x => x.category === p.category && x.id !== p.id);
+                const isWished = Store.data.wishlist.includes(p.id);
+
+                el.innerHTML = `
+                <div class="pdp-slider-container">
+                    <div class="pdp-product-name-top">${p.name}</div>
+                    <div class="pdp-slider" id="pdp-slider-track">
+                        ${p.images.map(src => `<div class="pdp-slide"><img src="${src}"></div>`).join('')}
+                    </div>
+                    <div class="pdp-dots" id="pdp-slider-dots"></div>
+                </div>
+
+                <div class="pdp-info">
+                    <div class="flex between center">
+                        <div style="font-size:16px; font-weight:600; color:#878787"></div>
+                        <i class="fas fa-heart" style="color:${isWished ? 'var(--danger)' : '#ccc'}; font-size:24px; cursor:pointer;" onclick="Actions.toggleWishlist('${p.id}')"></i>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <span style="font-size:24px; font-weight:700;">₹${p.price}</span>
+                        <span style="text-decoration:line-through; color:#878787; margin-left:10px;">₹${p.mrp}</span>
+                        <span style="color:green; font-weight:700; margin-left:10px;">${p.discount}% off</span>
+                        <div style="color:#f59e0b; margin-top:5px; font-size:12px;">
+                           ${Array(p.rating || 5).fill('<i class="fas fa-star"></i>').join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pdp-info">
+                    <div class="delivery-txt">
+                         <i class="fas fa-truck" style="color:var(--primary)"></i>
+                         ${p.delivery === 0 ? 'Free Delivery' : 'Delivery Charge: ₹'+p.delivery}
+                    </div>
+
+                    <div class="flex gap-10" style="margin-top:15px;">
+                        <button class="btn btn-white w-full" onclick="Router.navigate('chat')"><i class="fas fa-comment-dots"></i> Contact Owner</button>
+                        <button class="btn btn-white w-full" onclick="Actions.share('${p.id}')"><i class="fas fa-share-alt"></i> Share</button>
+                    </div>
+
+                    <div style="margin-top:20px;">
+                        <h4 style="margin-bottom:10px;">Product Details</h4>
+                        <p style="color:#555; line-height:1.5; font-size:14px;">${p.longDesc || p.desc} <br><br> Genuine product with brand warranty.</p>
+                    </div>
+                </div>
+
+                <div class="section-title">Similar Products</div>
+                <div class="product-grid" style="margin-bottom:70px;"> <!-- Increased margin-bottom for fixed footer -->
+                    ${related.map(r => Components.productCard(r)).join('')}
+                </div>
+
+                <div class="pdp-footer">
+                    <button class="pdp-btn btn-cart" onclick="Actions.addToCart('${p.id}')">ADD TO CART</button>
+                    <button class="pdp-btn btn-buy" onclick="Actions.buyNow('${p.id}')">BUY NOW</button>
+                </div>`;
+
+                setTimeout(() => UI.initSlider('pdp-slider-track', 'pdp'), 100);
+            },
+
+            checkout: (el, id) => {
+                if(!Auth.check()) return Router.navigate('login');
+                const p = Store.data.products.find(x => x.id === id);
+                if (!p) return Router.navigate('home');
+                document.getElementById('page-title').innerText = 'Checkout';
+
+                el.innerHTML = `
+                <div style="padding:15px;">
+                    <!-- Product Summary -->
+                    <div class="flex" style="background:var(--bg-white); padding:10px; border-radius:4px; margin-bottom:20px; gap:15px; box-shadow:var(--shadow-sm);">
+                        <img src="${p.images[0]}" style="width:60px; height:60px; object-fit:contain;">
+                        <div>
+                            <div style="font-weight:600; font-size:14px; color:var(--text-main);">${p.name}</div>
+                            <div style="margin-top:5px; font-weight:700; color:var(--text-main);">Total: ₹${p.price + p.delivery}</div>
+                        </div>
+                    </div>
+
+                    <!-- Address Form -->
+                    <div style="background:var(--bg-white); padding:15px; border-radius:4px; box-shadow:var(--shadow-sm);">
+                        <h3 style="margin-bottom:15px; color:var(--text-main);">Shipping Details</h3>
+                        <div class="form-group"><label class="form-label">Full Name *</label><input class="form-input" id="c-name" placeholder="Name" value="${Store.data.user.name || ''}"></div>
+                        <div class="form-group"><label class="form-label">Phone Number *</label><input class="form-input" id="c-phone" type="tel" value="${Store.data.user.phone}" readonly></div>
+                        <div class="form-group"><label class="form-label">Email Address *</label><input class="form-input" id="c-email" type="email" placeholder="Email (Compulsory)" value="${Store.data.user.email || ''}"></div>
+                        <div class="form-group"><label class="form-label">Village / Building *</label><input class="form-input" id="c-vill" placeholder="House No, Building"></div>
+                        <div class="form-group"><label class="form-label">Street / More Details (Optional)</label><input class="form-input" id="c-details" placeholder="Street, Landmark"></div>
+                        <div class="form-group flex gap-10">
+                            <div class="w-full"><label class="form-label">City / Town *</label><input class="form-input" id="c-city"></div>
+                            <div class="w-full"><label class="form-label">Pincode *</label><input class="form-input" id="c-pin" type="tel" maxlength="6"></div>
+                        </div>
+                        <div class="form-group"><label class="form-label">State *</label><input class="form-input" id="c-state"></div>
+                    </div>
+
+                    <!-- Payment -->
+                    <div style="background:var(--bg-white); padding:15px; border-radius:4px; margin-top:15px; box-shadow:var(--shadow-sm);">
+                        <h3 style="margin-bottom:10px; color:var(--text-main);">Payment</h3>
+                        <div class="flex center" style="justify-content:flex-start; gap:10px;">
+                            <i class="fas fa-check-circle" style="color:var(--primary)"></i>
+                            <span style="color:var(--text-main);">Cash on Delivery (COD)</span>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="position:fixed; bottom:0; left:0; width:100%; background:var(--bg-white); padding:10px; border-top:1px solid #eee; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); ">
+                        <div class="between flex" style="margin-bottom:10px; font-weight:700; color:var(--text-main);">
+                            <span>To Pay</span>
+                            <span>₹${p.price + p.delivery}</span>
+                        </div>
+                        <button class="btn btn-secondary w-full" onclick="Actions.confirmOrder('${p.id}')">CONFIRM ORDER</button>
+                    </div>
+                </div>`;
+            },
+
+            cart: (el) => {
+                document.getElementById('page-title').innerText = 'My Cart';
+                if(Store.data.cart.length === 0) {
+                    el.innerHTML = `<div class="center" style="height:80vh; flex-direction:column;"><i class="fas fa-shopping-cart" style="font-size:50px; color:#ccc;"></i><h3 style="margin-top:10px; color:var(--text-sub);">Cart is Empty</h3><button class="btn btn-primary" style="margin-top:20px;" onclick="Router.navigate('home')">Shop Now</button></div>`;
+                    return;
+                }
+
+                let html = `<div style="padding-bottom:60px;">`;
+                let total = 0;
+                Store.data.cart.forEach(id => {
+                    const p = Store.data.products.find(x => x.id === id);
+                    if(p) {
+                        total += p.price + p.delivery;
+                        html += `
+                        <div class="flex" style="background:var(--bg-white); padding:15px; margin-bottom:2px; align-items:flex-start; gap:15px; box-shadow:var(--shadow-sm);">
+                            <div style="width:80px; height:80px;"><img src="${p.images[0]}" style="width:100%; height:100%; object-fit:contain;"></div>
+                            <div style="flex:1;">
+                                <div style="font-size:14px; font-weight:500; color:var(--text-main);">${p.name}</div>
+                                <div style="margin:5px 0; font-weight:700; color:var(--text-main);">₹${p.price}</div>
+                                <div style="font-size:12px; color:var(--text-sub);">Delivery: ₹${p.delivery}</div>
+                            </div>
+                            <div class="flex gap-10" style="align-self:center;">
+                                <i class="fas fa-heart" style="color:${Store.data.wishlist.includes(p.id) ? 'var(--danger)' : '#ccc'}; font-size:20px; cursor:pointer;" onclick="Actions.toggleWishlist('${p.id}', true)"></i>
+                                <i class="fas fa-trash" style="color:red;" onclick="Actions.removeFromCart('${p.id}')"></i>
+                            </div>
+                        </div>`;
+                    }
+                });
+
+                html += `
+                <div style="position:fixed; bottom:0; left:0; width:100%; background:var(--bg-white); padding:10px; border-top:1px solid #eee; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+                    <div class="between flex" style="margin-bottom:10px; font-weight:700; color:var(--text-main);">
+                        <span>TOTAL</span>
+                        <span>₹${total}</span>
+                    </div>
+                    <button class="btn btn-secondary w-full" onclick="Actions.buyNow('${Store.data.cart[0]}')">PLACE ORDER (First Item)</button>
+                </div>
+                </div>`;
+                el.innerHTML = html;
+            },
+
+            wishlist: (el) => {
+                document.getElementById('page-title').innerText = 'My Wishlist';
+                if(Store.data.wishlist.length === 0) {
+                    el.innerHTML = `<div class="center" style="height:80vh; flex-direction:column;"><i class="fas fa-heart" style="font-size:50px; color:#ccc;"></i><h3 style="margin-top:10px; color:var(--text-sub);">Wishlist is Empty</h3><button class="btn btn-primary" style="margin-top:20px;" onclick="Router.navigate('home')">Shop Now</button></div>`;
+                    return;
+                }
+
+                let html = `<div class="product-grid" style="padding-top:20px;">`;
+                Store.data.wishlist.forEach(id => {
+                    const p = Store.data.products.find(x => x.id === id);
+                    if(p) html += Components.productCard(p);
+                });
+                html += `</div>`;
+                el.innerHTML = html;
+            },
+
+            orders: (el) => {
+                document.getElementById('page-title').innerText = 'My Orders';
+                if(!Auth.check()) return Views.login(el);
+
+                // BUG FIX: Filter orders by the user's phone number
+                const myOrders = Store.data.orders.filter(o => o.user && o.user.phone === Store.data.user.phone).reverse();
+
+                if(myOrders.length === 0) {
+                    el.innerHTML = `<div class="center" style="height:80vh; flex-direction:column; color:var(--text-sub);">No Orders Found</div>`;
+                    return;
+                }
+
+                let html = `<div style="padding:10px;">`;
+                myOrders.forEach(o => {
+                    html += `
+                    <div class="order-item st-${o.status}">
+                        <div class="between flex">
+                            <span style="font-weight:700; color:var(--text-main);">Order #${o.id}</span>
+                            <span style="font-size:12px; font-weight:600; color:${o.status==='Accepted'?'green':(o.status==='Rejected'?'red':'orange')}">${o.status} ${o.status==='Accepted'?'✅':''}</span>
+                        </div>
+                        <div style="margin:10px 0; font-size:14px; color:var(--text-main);">${o.productName}</div>
+                        <div class="between flex" style="font-size:12px; color:var(--text-sub);">
+                            <span>${new Date(o.date).toLocaleDateString()}</span>
+                            <span style="font-weight:700; color:var(--text-main);">₹${o.total}</span>
+                        </div>
+                    </div>`;
+                });
+                html += `</div>`;
+                el.innerHTML = html;
+            },
+
+            chat: (el) => {
+                 document.getElementById('page-title').innerText = 'Contact Owner';
+                 if(!Auth.check()) return Views.login(el);
+
+                 const userMsgs = Store.data.messages.filter(m => m.userId === Store.data.user.phone);
+
+                 let html = `
+                 <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="text-center" style="color:var(--text-sub); font-size:12px;">This chat is for direct contact with the owner/admin.</div>
+                        ${userMsgs.map(m => {
+                            let msgHtml = `<div class="chat-bubble ${m.sender === 'user' ? 'msg-user' : 'msg-admin'}">${m.text}</div>`;
+                            return msgHtml;
+                        }).join('')}
+                    </div>
+                    <div class="chat-input-area">
+                        <input id="user-chat-input" class="form-input" placeholder="Type your message...">
+                        <button class="btn btn-primary" onclick="Actions.sendUserMessage('${Store.data.user.phone}')"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                 </div>`;
+                 el.innerHTML = html;
+                 setTimeout(() => document.getElementById('chat-messages').scrollTop = 9999, 100);
+            },
+
+            login: (el) => {
+                document.getElementById('page-title').innerText = 'Login / Sign Up';
+                el.innerHTML = `
+                <div class="login-container">
+                    <div class="login-card">
+                        <div class="app-icon"><img src="https://i.ibb.co/k22dzznf/x.jpg" alt="Logo"></div>
+                        <h2 style="color:var(--primary); margin-bottom:5px;">National Store</h2>
+                        <p style="color:#888; font-size:13px; margin-bottom:30px;" id="login-subtitle">Sign in to continue shopping</p>
+
+                        <div id="signup-name-group" class="form-group hidden">
+                            <input class="form-input" id="l-name" type="text" placeholder="Enter Your Name">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-input" id="l-phone" type="tel" placeholder="Enter Mobile Number" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-input" id="l-pin" type="password" placeholder="Enter 4-Digit PIN" maxlength="4">
+                            <div id="login-error-message" class="error-message hidden">Incorrect PIN.</div>
+                        </div>
+
+                        <button class="btn btn-primary w-full" style="height:45px; margin-top:10px;" onclick="Actions.login()">LOGIN</button>
+                        <div class="signup-toggle" onclick="UI.toggleSignupMode()">New User? Sign Up</div>
+                        <button class="btn btn-secondary w-full hidden" id="signup-btn" style="height:45px; margin-top:10px;" onclick="Actions.signup()">SIGN UP</button>
+                    </div>
+                </div>`;
+            },
+
+            static: (el, title, content) => {
+                document.getElementById('page-title').innerText = title;
+                el.innerHTML = `
+                <div style="padding:20px; background:var(--bg-white); min-height:80vh; box-shadow:var(--shadow-sm); border-radius:8px;">
+                    <div style="text-align:center; margin-bottom:30px;">
+                        <div class="app-icon" style="margin:0 auto 10px; width:60px; height:60px; font-size:20px;">
+                            <img src="https://i.ibb.co/k22dzznf/x.jpg" alt="Logo">
+                        </div>
+                        <h3 style="color:var(--text-main);">National Store</h3>
+                    </div>
+                    <div style="line-height:1.6; color:var(--text-sub);">${content}</div>
+                </div>`;
+            }
+        };
+
+        const Components = {
+            productCard: (p) => `
+            <div class="product-card" onclick="Router.navigate('product=${p.id}')">
+                <div class="p-img-box"><img src="${p.images[0]}"></div>
+                <div class="p-title">${p.name}</div>
+                <div class="p-price-row">
+                    <span class="current-price">₹${p.price}</span>
+                    <span class="mrp-price">₹${p.mrp}</span>
+                    <span class="off-tag">${p.discount}% off</span>
+                </div>
+            </div>`
+        };
+
+        /*
+        ========================================
+        4. BUSINESS LOGIC (ACTIONS)
+        ========================================
+        */
+        const Actions = {
+            login: () => {
+                const ph = document.getElementById('l-phone').value;
+                const pin = document.getElementById('l-pin').value;
+                const errorDisplay = document.getElementById('login-error-message');
+
+                errorDisplay.classList.add('hidden'); // Hide previous errors
+
+                if(ph.length !== 10 || pin.length !== 4) {
+                    errorDisplay.innerText = 'Please enter a valid 10-digit mobile number and 4-digit PIN.';
+                    errorDisplay.classList.remove('hidden');
+                    return;
+                }
+
+                UI.showLoader(true);
+                setTimeout(() => {
+                    const foundUser = Store.data.users.find(u => u.phone === ph && u.pin === pin);
+                    if (foundUser) {
+                        Store.data.user = {
+                            phone: foundUser.phone,
+                            name: foundUser.name,
+                            email: foundUser.email
+                        };
+                        Store.save();
+                        UI.showLoader(false);
+                        Router.navigate('home');
+                    } else {
+                        UI.showLoader(false);
+                        errorDisplay.innerText = 'Incorrect mobile number or PIN.';
+                        errorDisplay.classList.remove('hidden');
+                    }
+                }, 1000);
+            },
+
+            signup: () => {
+                const name = document.getElementById('l-name').value;
+                const ph = document.getElementById('l-phone').value;
+                const pin = document.getElementById('l-pin').value;
+                const errorDisplay = document.getElementById('login-error-message');
+
+                errorDisplay.classList.add('hidden'); // Hide previous errors
+
+                if (!name || name.trim() === '') {
+                    errorDisplay.innerText = 'Please enter your name.';
+                    errorDisplay.classList.remove('hidden');
+                    return;
+                }
+                if(ph.length !== 10) {
+                    errorDisplay.innerText = 'Please enter a valid 10-digit mobile number.';
+                    errorDisplay.classList.remove('hidden');
+                    return;
+                }
+                if(pin.length !== 4) {
+                    errorDisplay.innerText = 'Please enter a 4-digit PIN.';
+                    errorDisplay.classList.remove('hidden');
+                    return;
+                }
+
+                if (Store.data.users.find(u => u.phone === ph)) {
+                    errorDisplay.innerText = 'This mobile number is already registered. Please login or use a different number.';
+                    errorDisplay.classList.remove('hidden');
+                    return;
+                }
+
+                UI.showLoader(true);
+                setTimeout(() => {
+                    const newUser = {
+                        phone: ph,
+                        name: name,
+                        pin: pin,
+                        email: `${name.toLowerCase().replace(/\s/g, '')}@example.com` // Auto-generate simple email
+                    };
+                    Store.data.users.push(newUser);
+                    Store.data.user = {
+                        phone: newUser.phone,
+                        name: newUser.name,
+                        email: newUser.email
+                    };
+                    Store.save();
+                    UI.showLoader(false);
+                    Router.navigate('home');
+                }, 1000);
+            },
+
+            logout: () => {
+                Store.data.user = null;
+                Store.save();
+                Router.navigate('home');
+            },
+
+            addToCart: (id) => {
+                if(Store.data.cart.includes(id)) {
+                    alert('Item is already in your cart!');
+                    return Router.navigate('cart');
+                }
+                Store.data.cart.push(id);
+                Store.save();
+                alert('Added to Cart');
+            },
+
+            removeFromCart: (id) => {
+                Store.data.cart = Store.data.cart.filter(x => x !== id);
+                Store.save();
+                Router.render('cart'); // Re-render cart view
+            },
+
+            toggleWishlist: (id, fromCart=false) => {
+                const idx = Store.data.wishlist.indexOf(id);
+                if (idx > -1) {
+                    Store.data.wishlist.splice(idx, 1);
+                    alert('Removed from Wishlist');
+                } else {
+                    Store.data.wishlist.push(id);
+                    alert('Added to Wishlist');
+                }
+                Store.save();
+                if(fromCart) Router.render('cart'); // Re-render cart if action from there
+                else Router.render('product', id); // Re-render product page
+            },
+
+            buyNow: (id) => {
+                if(!Auth.check()) return Router.navigate('login');
+                UI.showLoader(true);
+                setTimeout(() => {
+                    UI.showLoader(false);
+                    Router.navigate('checkout='+id);
+                }, 300);
+            },
+
+            confirmOrder: (id) => {
+                const name = document.getElementById('c-name').value;
+                const email = document.getElementById('c-email').value;
+                const vill = document.getElementById('c-vill').value;
+                const city = document.getElementById('c-city').value;
+                const pin = document.getElementById('c-pin').value;
+                const state = document.getElementById('c-state').value;
+                const details = document.getElementById('c-details').value;
+
+                if(!name || !email || !vill || !city || !pin || !state) return alert('Please fill all mandatory address fields (*)');
+                if(!email.includes('@')) return alert('Invalid Email Format');
+
+                const loader = document.getElementById('loader');
+                loader.innerHTML = `<div class="spinner"></div><h3 style="margin-top:20px; color:#333;" class="blink">Confirming Order...</h3>`;
+                loader.style.display = 'flex';
+
+                setTimeout(() => {
+                    const p = Store.data.products.find(x => x.id === id);
+                    if(!p) return;
+
+                    const order = {
+                        id: Date.now().toString().substring(0, 10), // 10 digit ID
+                        productName: p.name, // Added for Admin Panel list view
+                        total: p.price + p.delivery,
+                        date: new Date().toISOString(),
+                        status: 'Processing',
+                        user: { // Store full user details for Admin Panel
+                            phone: Store.data.user.phone,
+                            email,
+                            name,
+                            address: `${vill}, ${city}, ${state}, PIN: ${pin}`,
+                            moreDetails: details
+                        },
+                        payment: 'COD'
+                    };
+                    Store.data.orders.push(order);
+                    Store.save();
+
+                    // Remove item from cart if it was ordered
+                    Store.data.cart = Store.data.cart.filter(itemId => itemId !== id);
+                    Store.save();
+
+
+                    loader.innerHTML = `
+                        <div style="width:60px; height:60px; background:green; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h2 style="margin-top:20px;">Order Placed!</h2>`;
+
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        loader.innerHTML = '<div class="spinner"></div>';
+                        Router.navigate('orders');
+                    }, 1500);
+                }, 2000);
+            },
+
+            sendUserMessage: (userId) => {
+                const txtInput = document.getElementById('user-chat-input');
+                const txt = txtInput.value;
+                if(!txt || txt.trim() === '') return;
+
+                Store.data.messages.push({
+                    id: Date.now(),
+                    userId: userId,
+                    text: txt,
+                    time: new Date().toISOString(),
+                    sender: 'user', // Mark as user message
+                    reply: null
+                });
+                Store.save();
+                txtInput.value = '';
+                Router.render('chat'); // Re-render chat
+            },
+
+            share: (id) => {
+                const p = Store.data.products.find(x => x.id === id);
+                if (!p) return;
+
+                const shareMsg = `
+✅• 𝗕𝘂𝘆: ${p.name} ✨
+✅• price: ₹${p.price}
+✅• 𝗰𝗮𝘀𝗵 𝗼𝗻 𝗱𝗲𝗹𝗶𝘃𝗲𝗿𝘆 𝗮𝘃𝗶𝗹𝗮𝗯𝗹𝗲 ✨
+        🔗 ${window.location.origin}/#product=${p.id}    `;
+
+                if(navigator.share) {
+                    navigator.share({
+                        title: `National Store: ${p.name}`,
+                        text: shareMsg,
+                        url: window.location.href
+                    }).catch(error => console.error('Error sharing:', error));
+                } else {
+                    const temp = document.createElement('textarea');
+                    temp.value = shareMsg;
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    alert('Share message copied to clipboard!');
+                }
+            }
+        };
+
+        /*
+        ========================================
+        5. UI CONTROLLERS
+        ========================================
+        */
+        const UI = {
+            toggleSidebar: (force) => {
+                const sb = document.getElementById('sidebar');
+                const ov = document.getElementById('sidebar-overlay');
+                const isActive = sb.classList.contains('active');
+
+                if (force === false || (force === undefined && isActive)) {
+                    sb.classList.remove('active');
+                    ov.classList.remove('active');
+                } else if (force === true || (force === undefined && !isActive)) {
+                    sb.classList.add('active');
+                    ov.classList.add('active');
+                }
+            },
+
+            showLoader: (show) => {
+                document.getElementById('loader').style.display = show ? 'flex' : 'none';
+            },
+
+            updateBadges: () => {
+                const cartCount = Store.data.cart.length;
+                const cartBadges = [document.getElementById('cart-badge'), document.getElementById('cart-badge-sub')];
+
+                cartBadges.forEach(b => {
+                    if (b) {
+                        b.innerText = cartCount;
+                        b.classList.toggle('hidden', cartCount === 0);
+                    }
+                });
+            },
+
+            updateHeaderAuthButtons: () => {
+                const authButtonsContainer = document.getElementById('header-auth-buttons');
+                const loginText = 'Login';
+                const myAccountText = 'My Account';
+
+                if (Auth.check()) {
+                    authButtonsContainer.innerHTML = `
+                        <div class="h-icon" onclick="Router.navigate('orders')">
+                            <i class="fas fa-box" style="font-size: 18px;"></i>
+                        </div>
+                        <div class="h-icon" onclick="Router.navigate('cart')">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="badge hidden" id="cart-badge">0</span>
+                        </div>
+                        <div class="h-btn" onclick="UI.toggleSidebar(true)">
+                            ${myAccountText}
+                        </div>
+                    `;
+                } else {
+                    authButtonsContainer.innerHTML = `
+                        <div class="h-btn" onclick="Router.navigate('login')">
+                            ${loginText}
+                        </div>
+                        <div class="h-icon" onclick="Router.navigate('cart')">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="badge hidden" id="cart-badge">0</span>
+                        </div>
+                    `;
+                }
+                UI.updateBadges(); // Ensure badges are updated after rendering buttons
+            },
+
+            updateSidebarUser: () => {
+                const sbName = document.getElementById('sb-name');
+                const sbPhone = document.getElementById('sb-phone');
+                const sbWelcomeMsg = document.getElementById('sb-welcome-msg');
+                const sbLogoutBtn = document.getElementById('sidebar-logout-btn');
+                const sidebarUserAvatar = document.getElementById('sidebar-user-avatar');
+
+                sidebarUserAvatar.src = 'https://i.ibb.co/k22dzznf/x.jpg';
+                sbWelcomeMsg.innerText = 'Welcome to National Store';
+
+                if(Auth.check()) {
+                    sbName.innerText = Store.data.user.name || 'User';
+                    sbPhone.innerText = Store.data.user.phone;
+                    sbLogoutBtn.classList.remove('hidden');
+                } else {
+                    sbName.innerText = 'Guest';
+                    sbPhone.innerText = '';
+                    sbLogoutBtn.classList.add('hidden');
+                }
+            },
+
+            search: (q) => {
+                if(!window.location.hash.includes('home')) Router.navigate('home');
+                // Allow a small delay to let the home page render before filtering
+                setTimeout(() => {
+                    q = q.toLowerCase();
+                    const cards = document.querySelectorAll('.product-card');
+                    cards.forEach(c => {
+                        const name = c.querySelector('.p-title').innerText.toLowerCase();
+                        c.style.display = name.includes(q) ? 'block' : 'none';
+                    });
+                }, 100);
+            },
+
+            // New Slider management functions
+            activeSliders: {}, // To keep track of active slider intervals/listeners
+
+            destroySliders: () => {
+                // Clear any lingering slider intervals or event listeners
+                for (const sliderId in UI.activeSliders) {
+                    const { updateDots, scrollListener } = UI.activeSliders[sliderId];
+                    const track = document.getElementById(sliderId);
+                    if (track && scrollListener) {
+                        track.removeEventListener('scroll', scrollListener);
+                    }
+                }
+                UI.activeSliders = {};
+            },
+
+            initSlider: (trackId, type) => {
+                const track = document.getElementById(trackId);
+                const dotsContainer = document.getElementById(type === 'pdp' ? 'pdp-slider-dots' : 'slider-dots');
+
+                if(!track) return;
+
+                const slides = Array.from(track.children);
+                if(slides.length <= 1) {
+                    if (dotsContainer) dotsContainer.innerHTML = '';
+                    return;
+                }
+
+                // Initialize dots
+                if (dotsContainer) {
+                    dotsContainer.innerHTML = '';
+                    slides.forEach((_, i) => {
+                        const d = document.createElement('div');
+                        d.className = i === 0 ? (type === 'pdp' ? 'pdp-dot active' : 'dot active') : (type === 'pdp' ? 'pdp-dot' : 'dot');
+                        d.onclick = () => {
+                            track.scrollTo({ left: i * track.offsetWidth, behavior: 'smooth' });
+                        };
+                        dotsContainer.appendChild(d);
+                    });
+                }
+
+                // Function to update dots based on scroll position
+                const updateDots = () => {
+                    const scrollPos = track.scrollLeft;
+                    const slideWidth = track.offsetWidth;
+                    // Ensure slideWidth is not zero to prevent division by zero
+                    if (slideWidth === 0) return;
+                    const index = Math.round(scrollPos / slideWidth);
+
+                    if (dotsContainer) {
+                        Array.from(dotsContainer.children).forEach((d, i) => {
+                            d.className = i === index ? (type === 'pdp' ? 'pdp-dot active' : 'dot active') : (type === 'pdp' ? 'pdp-dot' : 'dot');
+                        });
+                    }
+                };
+
+                // Event listener for manual scroll
+                let isScrolling;
+                const scrollListener = () => {
+                    window.clearTimeout(isScrolling);
+                    isScrolling = setTimeout(() => {
+                        updateDots();
+                    }, 66); // Adjust debounce time as needed
+                };
+                track.addEventListener('scroll', scrollListener);
+
+                // Store active slider for cleanup
+                UI.activeSliders[trackId] = { updateDots, scrollListener };
+
+                // Initial dot update
+                updateDots();
+            },
+
+            showMaintenance: (msg) => {
+                document.getElementById('maint-message').innerText = msg;
+                document.getElementById('maint-overlay').classList.remove('hidden');
+            },
+
+            checkGlobalDialog: () => {
+                const dialogConfig = Store.config.dialog;
+                // Check if dialog is active, has main content, and hasn't been closed by this user (simulated via sessionStorage)
+                if (dialogConfig && dialogConfig.active && dialogConfig.mainMsg && !sessionStorage.getItem('ns_dialog_closed')) {
+                    document.getElementById('dialog-top-msg').innerText = dialogConfig.topMsg || 'Important Update!';
+                    document.getElementById('dialog-main-msg').innerText = dialogConfig.mainMsg;
+
+                    const imgContainer = document.getElementById('dialog-img-container');
+                    if (dialogConfig.imgUrl) {
+                        imgContainer.innerHTML = `<img src="${dialogConfig.imgUrl}" alt="Dialogue Image">`;
+                        imgContainer.classList.remove('hidden');
+                    } else {
+                        imgContainer.classList.add('hidden');
+                    }
+
+                    document.getElementById('global-dialog').classList.remove('hidden');
+                }
+            },
+
+            closeGlobalDialog: () => {
+                document.getElementById('global-dialog').classList.add('hidden');
+                sessionStorage.setItem('ns_dialog_closed', 'true'); // Mark as seen for this session
+            },
+
+            toggleSignupMode: () => {
+                const signupNameGroup = document.getElementById('signup-name-group');
+                const loginButton = document.querySelector('.login-card .btn-primary');
+                const signupButton = document.getElementById('signup-btn');
+                const loginSubtitle = document.getElementById('login-subtitle');
+                const toggleLink = document.querySelector('.signup-toggle');
+                const loginError = document.getElementById('login-error-message');
+
+                const isSignupMode = signupNameGroup.classList.contains('hidden');
+
+                if (isSignupMode) { // Switch to Signup
+                    signupNameGroup.classList.remove('hidden');
+                    loginButton.classList.add('hidden');
+                    signupButton.classList.remove('hidden');
+                    loginSubtitle.innerText = 'Create your account to start shopping';
+                    toggleLink.innerText = 'Already a User? Login';
+                    loginButton.onclick = Actions.signup; // Change primary button action
+                } else { // Switch to Login
+                    signupNameGroup.classList.add('hidden');
+                    loginButton.classList.remove('hidden');
+                    signupButton.classList.add('hidden');
+                    loginSubtitle.innerText = 'Sign in to continue shopping';
+                    toggleLink.innerText = 'New User? Sign Up';
+                    loginButton.onclick = Actions.login; // Change primary button action back
+                }
+                loginError.classList.add('hidden'); // Clear any errors
+                document.getElementById('l-name').value = '';
+                document.getElementById('l-phone').value = '';
+                document.getElementById('l-pin').value = '';
+            }
+        };
+
+        const Auth = {
+            check: () => {
+                return !!Store.data.user;
+            },
+            logout: Actions.logout
+        };
+
+        const App = {
+            openChat: () => {
+                window.location.href = "https://wa.me/917052500819?text=Hi%20National%20Store%2C%20I%20need%20help.";
+            },
+            contactDev: () => {
+                window.location.href = "https://t.me/Isharoa1";
+            },
+            showCoins: () => alert(`You have ${Store.data.coins} National Coins`)
+        };
+
+        /*
+        ========================================
+        6. SCROLL LOGIC
+        ========================================
+        */
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const current = window.pageYOffset;
+            const header = document.getElementById('header-home');
+            const search = document.getElementById('search-bar');
+
+            if(window.location.hash !== '' && window.location.hash !== '#home') return;
+
+            if (current > lastScroll && current > 60) {
+                // Scrolling Down -> Hide
+                header.classList.add('hidden-scroll');
+                search.classList.add('hidden-scroll');
+            } else {
+                // Scrolling Up -> Show
+                header.classList.remove('hidden-scroll');
+                search.classList.remove('hidden-scroll');
+            }
+            lastScroll = current;
+        });
+
+        // Handle browser back/forward buttons to ensure transitions
+        window.addEventListener('popstate', () => {
+            const app = document.getElementById('app-view');
+            app.style.animation = 'fadeOut var(--trans-speed) ease-out forwards'; // Fade out current content
+
+            UI.destroySliders(); // Destroy sliders before new content renders
+
+            setTimeout(() => {
+                Router.handleRoute(); // Re-render the page at the new history state
+            }, parseFloat(getComputedStyle(app).animationDuration) * 1000); // Wait for fadeOut to complete
+        });
+
+        // Init
+        window.addEventListener('load', () => {
+            Store.init();
+            window.addEventListener('hashchange', Router.handleRoute);
+            if (!Store.config.maintenance) {
+                Router.handleRoute();
+                document.getElementById('loader').style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html>
